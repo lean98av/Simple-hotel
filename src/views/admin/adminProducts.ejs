@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">ShopMaster</a>
+    </div>
+  </nav>
+
+  <!-- Admin Panel -->
+  <div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><%- title %></h1>
+    <button onclick="goToAdmin()" class="btn btn-secondary">← Volver al Admin</button>
+  </div>
+
+ <!-- Fila con filtro de categoría y botón -->
+<div class="row mb-4 align-items-end">
+  <div class="col-md-6">
+    <label for="categoryFilter" class="form-label">Filtrar por Categoría</label>
+    <select id="categoryFilter" class="form-select">
+      <option value="all" <%= (String(categoryFilter || 'all') === 'all') ? 'selected' : '' %>>Sin filtro (Todos)</option>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat.id %>" <%= String(cat.id) === String(categoryFilter) ? 'selected' : '' %>><%= cat.name %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="col-md-6 text-md-end mt-3 mt-md-0">
+    <button onclick="goToCreate()" class="btn btn-primary">
+      ➕ Crear Producto
+    </button>
+  </div>
+</div>
+
+<!-- Panel de filtros adicionales -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Filtros adicionales</h5>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="showToClients" value="true" <%= showToClientsFilter ? 'checked' : '' %>>
+          <label class="form-check-label" for="showToClients">Productos visibles</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="outStock" value="true" <%= outStockFilter ? 'checked' : '' %>>
+          <label class="form-check-label" for="outStock">Solo productos sin stock</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="topProduct" value="true" <%= topProductFilter ? 'checked' : '' %>>
+          <label class="form-check-label" for="topProduct">Producto destacado</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="d-flex justify-content-start gap-2 mt-3">
+      <button onclick="applyFilters()" class="btn btn-primary">Buscar 🔍</button>
+      <button onclick="clearFilters()" class="btn btn-outline-secondary">Resetear filtros</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <% function getImageMimeType(filename) {
+       const ext = filename?.split('.').pop()?.toLowerCase();
+       const types = {
+         jpg: 'image/jpeg',
+         jpeg: 'image/jpeg',
+         png: 'image/png',
+         gif: 'image/gif',
+         webp: 'image/webp',
+       };
+       return types[ext] || 'image/jpeg';
+     }
+  %>
+
+  <!-- Product List -->
+  <div class="container mt-4">
+    <% if (products.length === 0) { %>
+      <div class="alert alert-info">No se encontraron productos.</div>
+    <% } else { %>
+      <div class="row">
+        <% products.forEach(product => { %>
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <% if (product.images && product.images.length > 0) { %>
+                  <img src="data:<%= getImageMimeType(product.images[0].name) %>;base64,<%= product.images[0].file %>"
+                      alt="<%= product.name %> Imagen 1"
+                      class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
+                <% } %>
+                <h5 class="card-title"><%= product.name %></h5>
+                <p class="card-text"><strong class="text-primary">$<%= Number(product.price).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></strong></p>
+                 <% if (product.id) { %>
+                  <p class="card-text text-muted"><strong class="text-secundary">ID: <%= product.id %></strong></p>
+                <% } %>
+                <% if (product.description) { %>
+                  <p class="card-text text-muted">Descripción: <%= product.description %></p>
+                <% } %>
+                <p class="card-text">
+                  <small class="text-muted">
+                    Categoría: <%= product.category ? product.category.name : 'Sin categoría' %>
+                  </small>
+                </p>
+                <div class="d-flex gap-2">
+                  <span class="badge <%= product.outStock ? 'bg-danger' : 'bg-success' %>">
+                    <%= product.outStock ? 'Sin Stock' : 'En Stock' %>
+                  </span>
+                  <span class="badge <%= product.showToClients ? 'bg-info' : 'bg-secondary' %>">
+                    <%= product.showToClients ? 'Visible' : 'Oculto' %>
+                  </span>
+                  <button onclick="editProduct(<%= product.id %>)" class="btn btn-sm btn-warning">
+                    ✏️ Editar
+                  </button>
+                  <button onclick="deleteProduct(<%= product.id %>)" class="btn btn-sm btn-danger">
+                    🗑️ Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/modal.js"></script>
+  <script>
+  // Authentication uses cookie (adminToken). No client-side stored password.
+
+  // Función para guardar filtros en cookie (un solo objeto JSON)
+  function setFilterCookie() {
+    const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
+    const showToClients = document.getElementById('showToClients')?.checked;
+    const outStock = document.getElementById('outStock')?.checked;
+    const topProduct = document.getElementById('topProduct')?.checked;
+
+    const filters = {
+      categoryFilter,
+      showToClients: showToClients ? 'true' : 'false',
+      outStock: outStock ? 'true' : 'false',
+      topProduct: topProduct ? 'true' : 'false',
+    };
+
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 7);
+    const cookieValue = encodeURIComponent(JSON.stringify(filters));
+    document.cookie = `adminFilters=${cookieValue};expires=${expires.toUTCString()};path=/`;
+  }
+
+  // Helper to read a cookie by name
+  function getCookie(name) {
+    const match = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+    return match ? decodeURIComponent(match.split('=')[1]) : null;
+  }
+
+  // Al cargar la página, leer los filtros de cookie y actualizar controles
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = getCookie('adminFilters');
+    if (saved) {
+      try {
+        const filters = JSON.parse(saved);
+        const categorySelect = document.getElementById('categoryFilter');
+        if (categorySelect && filters.categoryFilter) {
+          categorySelect.value = filters.categoryFilter;
+        }
+
+        const elShowToClients = document.getElementById('showToClients');
+        if (elShowToClients) elShowToClients.checked = (filters.showToClients === 'true' || filters.showToClients === true);
+
+        const elOutStock = document.getElementById('outStock');
+        if (elOutStock) elOutStock.checked = (filters.outStock === 'true' || filters.outStock === true);
+
+        const elTopProduct = document.getElementById('topProduct');
+        if (elTopProduct) elTopProduct.checked = (filters.topProduct === 'true' || filters.topProduct === true);
+      } catch (err) {
+        // ignore parse errors
+      }
+    }
+  });
+
+  // Aplicar filtros: guardar cookie y recargar (el servidor leerá la cookie)
+  function applyFilters() {
+    setFilterCookie();
+    // For clarity, navigate to base admin products route (no extra query)
+    window.location.href = '/admin/products';
+  }
+
+  // Eliminar filtros (Reset)
+  function clearFilters() {
+    document.cookie = 'adminFilters=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+    window.location.reload();
+  }
+
+  function editProduct(id) {
+    window.location.href = '/admin/products/' + id + '/edit';
+  }
+
+  async function deleteProduct(id) {
+    // Mostrar modal de confirmación
+    showConfirmModal('¿Eliminar producto?', '¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.', () => {
+      deleteProductConfirmed(id);
+    });
+  }
+
+  function deleteProductConfirmed(id) {
+    try {
+      const response = fetch('/admin/products/' + id, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      response.then(async (res) => {
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showModal('Producto eliminado correctamente', '', false);
+          window.location.reload();
+        } else {
+          showModal('Error al eliminar producto', data.message || '', false);
+        }
+      });
+    } catch (err) {
+      showModal('Error al eliminar producto', '', false);
+    }
+  }
+
+  function goToAdmin() {
+    window.location.href = '/admin';
+  }
+
+  function goToCreate() {
+    window.location.href = '/admin/products/create';
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

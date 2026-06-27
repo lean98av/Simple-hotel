@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopMaster - Finalizar Compra</title>
+
+  <!-- Estilos externos -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="/css/detail.css">
+</head>
+
+<body>
+  <%- include('partials/topbar') %>
+
+  <div class="container mt-4 pt-5"></div>
+
+  <div class="container py-5">
+    <h2 class="mb-4">Finalizar compra</h2>
+
+    <div class="row g-4">
+      <!-- Resumen -->
+      <div class="col-lg-5 order-1">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body">
+            <h5 class="mb-3">Resumen de compra</h5>
+            <div id="checkoutSummary"></div>
+          </div>
+        </div>
+
+        <!-- Información de envíos -->
+        <div class="shipping-card mt-4">
+          <div class="shipping-header">
+            <div class="shipping-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <h5 class="shipping-title">Información de envíos</h5>
+          </div>
+
+          <div class="shipping-item">
+            <i class="fas fa-motorcycle"></i>
+            <span>Envíos a domicilio por Uber Moto <small>(costo aparte)</small></span>
+          </div>
+
+          <div class="shipping-item">
+            <i class="fas fa-box"></i>
+            <span>Envíos al interior de la provincia por Balut Express <small>(costo aparte)</small></span>
+          </div>
+
+          <div class="shipping-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Envíos a todo el país por Correo Argentino <small>(costo aparte)</small></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="col-lg-7 order-2">
+        <form id="checkoutForm" method="POST" action="/checkout">
+          <input type="hidden" name="cart" id="cartInput">
+
+          <input class="form-control mb-3" name="clientName" placeholder="Nombre" required>
+          <input class="form-control mb-3" name="clientPhone" placeholder="Teléfono" required>
+          <input class="form-control mb-3" name="address" placeholder="Dirección" required>
+          <textarea class="form-control mb-3" name="clientNotes" placeholder="Notas"></textarea>
+
+          <button class="btn btn-primary w-100 rounded-pill">Confirmar pedido</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <!-- Scripts -->
+  <script>
+    function renderCheckoutSummary() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const container = document.getElementById('checkoutSummary');
+
+      if (!cart.length) {
+        container.innerHTML = `
+          <div class="alert alert-info">
+            Tu carrito está vacío
+          </div>
+        `;
+        return;
+      }
+
+      let total = 0;
+      let html = '';
+
+      cart.forEach(item => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        html += `
+          <div class="d-flex justify-content-between mb-2">
+            <span>${item.name} x${item.quantity}</span>
+            <strong>$${Number(subtotal).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</strong>
+          </div>
+        `;
+      });
+
+      html += `
+        <hr>
+        <div class="d-flex justify-content-between fs-5">
+          <strong>Total (no incluye envíos)</strong>
+          <strong>$${Number(total).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</strong>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    renderCheckoutSummary();
+  </script>
+
+  <script>
+    function showModal(title, message, showCancel = true) {
+      // Esperar a que Bootstrap esté cargado
+      if (!bootstrapLoaded) {
+        const checkBootstrap = setInterval(() => {
+          if (typeof bootstrap !== 'undefined') {
+            clearInterval(checkBootstrap);
+            bootstrapLoaded = true;
+            showModalInternal(title, message, showCancel);
+          }
+        }, 100);
+        return;
+      }
+      
+      showModalInternal(title, message, showCancel);
+    }
+
+    function showModalInternal(title, message, showCancel) {
+      const modalElement = document.getElementById('globalModal');
+      
+      if (!modalElement) {
+        console.warn('Modal no encontrado. Asegúrate de incluir el modal HTML en la vista.');
+        return;
+      }
+      
+      // Actualizar el contenido del modal
+      modalElement.querySelector('.modal-title').textContent = title;
+      modalElement.querySelector('.modal-body').innerHTML = message;
+      modalElement.dataset.showCancel = showCancel;
+      
+      // Mostrar el modal
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
+
+    const form = document.getElementById('checkoutForm');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+      if (!cart.length) {
+        showModal('Tu carrito está vacío', '', false);
+        return;
+      }
+
+      const body = {
+        cart: cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: Number(item.price).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+          quantity: item.quantity
+        })),
+        clientName: form.clientName.value,
+        clientPhone: form.clientPhone.value,
+        address: form.address.value,
+        clientNotes: form.clientNotes.value
+      };
+
+      const response = await fetch('/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem('lastOrder', JSON.stringify({
+          id: data.orderId,
+          cart: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: Number(item.price).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+            quantity: item.quantity
+          })),
+          clientName: form.clientName.value,
+          clientPhone: form.clientPhone.value,
+          address: form.address.value,
+          clientNotes: form.clientNotes.value,
+          total: Number(cart.reduce((acc, item) => acc + (Number(item.price) * item.quantity), 0))
+        }));
+
+        localStorage.removeItem('cart');
+        window.location.href = '/checkout/success';
+      } else {
+        showModal('Error al crear pedido', '', false);
+      }
+    });
+  </script>
+
+  <%- include('partials/globalModal') %>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

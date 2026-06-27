@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Aurora - Bienvenido</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/tokens.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+    <%- include('partials/topbar') %>
+    <!-- HERO BANNER / HOTEL -->
+    <% if (announcements && announcements.length > 0) { %>
+    <section class="hero-carousel">
+      <div id="hotelHeroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <% announcements.forEach((item, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <img src="data:image/jpeg;base64,<%= item.images && item.images[0] ? item.images[0].file : '' %>"
+                   class="d-block w-100" style="max-height:600px; object-fit:cover;" alt="<%= item.name %>">
+              <div class="carousel-caption d-md-block text-start" style="bottom:20%; left:8%; right:auto; text-shadow:0 2px 10px rgba(0,0,0,0.6)">
+                <h1 class="display-4"><%= item.name || 'Hotel Aurora' %></h1>
+                <p class="lead"><%= item.description || 'Bienvenido. Descubre nuestras habitaciones y servicios.' %></p>
+                <a href="/contact" class="btn btn-primary btn-lg">Reservar ahora</a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#hotelHeroCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#hotelHeroCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    </section>
+    <% } else { %>
+    <section class="hero-banner text-center py-5" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'); background-size:cover; background-position:center; background-attachment:fixed;">
+        <div class="container" style="background: rgba(0,0,0,0.4); padding: 3rem 2rem; border-radius: 12px;">
+            <h1>Hotel Aurora</h1>
+            <p class="hero-subtitle mb-4">Escapadas inolvidables, confort y servicio boutique</p>
+            <div class="hero-cta d-inline-block py-2 px-4 rounded-pill">Reserva tu habitación</div>
+        </div>
+    </section>
+    <% } %>
+
+   <% if (announcements && announcements.length > 0) { %>
+<section class="announcements-carousel mt-5 mb-5">
+  <div class="container">
+    <div id="announcementCarousel" class="carousel slide" data-bs-ride="carousel">
+
+      <!-- Indicadores -->
+      <div class="carousel-indicators">
+        <% announcements.forEach((announcement, index) => { %>
+          <button type="button" data-bs-target="#announcementCarousel" data-bs-slide-to="<%= index %>"
+                  class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+        <% }) %>
+      </div>
+
+      <!-- Items -->
+      <div class="carousel-inner">
+        <% announcements.forEach((announcement, index) => { %>
+          <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+            <a class="announcement-card d-block w-100">
+              <img src="data:image/jpeg;base64,<%= announcement.images && announcement.images[0] ? announcement.images[0].file : '' %>"
+                   alt="<%= announcement.name %>"
+                   class="img-fluid w-100"
+                   style="max-height: 400px; object-fit: cover;">
+              <div class="announcement-overlay">
+                <h2><%= announcement.name %></h2>
+                <p><%= announcement.description || '' %></p>
+              </div>
+            </a>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- Controles -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#announcementCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#announcementCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+  </div>
+</section>
+<% } %>
+   <% if (topProducts && topProducts.length > 0) { %>
+    <div class="text-center mb-4">
+      <h2>Habitaciones Destacadas</h2>
+      <p class="text-muted">Seleccionadas por su confort y vistas</p>
+    </div>
+      <% const totalProducts = topProducts.length;
+         const perCarousel = Math.ceil(totalProducts / 2);
+         const firstHalf = topProducts.slice(0, perCarousel);
+         const secondHalf = topProducts.slice(perCarousel);
+         %>
+      <div class="container mt-5 mb-5">
+        <div class="row">
+          <!-- Carrusel 1 -->
+          <div class="col-md-6">
+            <div class="carousel-wrapper">
+              <div id="productsCarousel1" class="carousel slide">
+                <!-- Indicadores -->
+                <div class="carousel-indicators">
+                  <% firstHalf.forEach((product, index) => { %>
+                    <button type="button" data-bs-target="#productsCarousel1" data-bs-slide-to="<%= index %>"
+                            class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+                  <% }) %>
+                </div>
+
+                <!-- Items -->
+                <div class="carousel-inner">
+                  <% firstHalf.forEach((product, index) => { %>
+                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                      <a href="/product/<%= product.id %>" class="product-card-carousel d-block">
+                        <img src="<%= product.images && product.images[0] ? ('data:image/jpeg;base64,' + product.images[0].file) : '/images/logo.png' %>"
+                              alt="<%= product.name %>"
+                              class="product-img-carousel <%= product.images && product.images[0] ? '' : 'img-logo' %>">
+                        <div class="product-overlay-carousel">
+                          <h3><%= product.name %></h3>
+                          <p class="product-price-carousel">Desde $<%= product.price %> por noche</p>
+                        </div>
+                      </a>
+                    </div>
+                  <% }) %>
+                </div>
+
+                <!-- Controles -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#productsCarousel1" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productsCarousel1" data-bs-slide="next">
+                  <span class="carousel-control-next-icon"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carrusel 2 -->
+          <div class="col-md-6">
+            <div class="carousel-wrapper">
+              <div id="productsCarousel2" class="carousel slide">
+
+                <!-- Indicadores -->
+                <div class="carousel-indicators">
+                  <% secondHalf.forEach((product, index) => { %>
+                    <button type="button" data-bs-target="#productsCarousel2" data-bs-slide-to="<%= index %>"
+                            class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+                  <% }) %>
+                </div>
+
+                <!-- Items -->
+                <div class="carousel-inner">
+                  <% secondHalf.forEach((product, index) => { %>
+                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                      <a href="/product/<%= product.id %>" class="product-card-carousel d-block">
+                        <img src="<%= product.images && product.images[0] ? ('data:image/jpeg;base64,' + product.images[0].file) : '/images/logo.png' %>"
+                              alt="<%= product.name %>"
+                              class="product-img-carousel <%= product.images && product.images[0] ? '' : 'img-logo' %>">
+                        <div class="product-overlay-carousel">
+                          <h2><%= product.name %></h2>
+                          <p class="product-price-carousel">$<%= product.price %></p>
+                        </div>
+                      </a>
+                    </div>
+                  <% }) %>
+                </div>
+
+                <!-- Controles -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#productsCarousel2" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productsCarousel2" data-bs-slide="next">
+                  <span class="carousel-control-next-icon"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+   <% } %>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="container mt-4 mb-5 pt-5">
+
+      <!-- FEATURES -->
+      <div class="row text-center mb-5">
+        <div class="col-md-4">
+          <i class="fa-solid fa-bed fa-3x mb-3 feature-icon"></i>
+          <h4>Habitaciones cómodas</h4>
+          <p class="text-muted">Diseño elegante, camas king-size y limpieza diaria.</p>
+        </div>
+        <div class="col-md-4">
+          <i class="fa-solid fa-utensils fa-3x mb-3 feature-icon"></i>
+          <h4>Restaurante & Bar</h4>
+          <p class="text-muted">Cocina local e internacional, menú para todos los gustos.</p>
+        </div>
+        <div class="col-md-4">
+          <i class="fa-solid fa-spa fa-3x mb-3 feature-icon"></i>
+          <h4>Spa & Bienestar</h4>
+          <p class="text-muted">Masajes, sauna y tratamientos relajantes.</p>
+        </div>
+      </div>
+
+      <!-- SHOWCASE: bloques alternados imagen/descripcion -->
+      <section class="features-showcase">
+        <div class="container">
+          <% if (categories && categories.length > 0) { %>
+            <% categories.forEach((category, index) => { %>
+              <div class="feature-block row align-items-center mb-5 <%= index % 2 === 1 ? 'flex-md-row-reverse' : '' %>">
+                <div class="col-md-6 feature-img fade-up">
+                  <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=example"
+                       alt="<%= category.name %>"
+                       class="img-fluid rounded-3 shadow-sm">
+                </div>
+                <div class="col-md-6 feature-desc fade-up">
+                  <h3><%= category.name %></h3>
+                  <p class="lead"><%= category.description || 'Descubre más sobre esta categoría.' %></p>
+                  <p class="text-muted">Explora nuestras opciones y encuentra la experiencia ideal para tu viaje.</p>
+                  <a href="/category/<%= category.id %>" class="btn btn-outline-secondary mt-3" style="border-color: #8b5a2b; color: #8b5a2b;">
+                    Ver más
+                  </a>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="text-center text-muted py-4">Pronto tendremos más categorías disponibles.</div>
+          <% } %>
+        </div>
+      </section>
+
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Inicializar carousels manualmente después de que cargue el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel1 = document.getElementById('productsCarousel1');
+            const carousel2 = document.getElementById('productsCarousel2');
+            
+            if (carousel1) {
+                const bsCarousel1 = new bootstrap.Carousel(carousel1, {
+                    interval: 3000,
+                    pause: 'hover',
+                    wrap: true
+                });
+            }
+            
+            if (carousel2) {
+                const bsCarousel2 = new bootstrap.Carousel(carousel2, {
+                    interval: 3000,
+                    pause: 'hover',
+                    wrap: true
+                });
+            }
+
+            // Scroll reveal: IntersectionObserver para elementos con .fade-up
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.12 };
+            const onIntersection = (entries, obs) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('in-view');
+                  obs.unobserve(entry.target);
+                }
+              });
+            };
+            const observer = new IntersectionObserver(onIntersection, observerOptions);
+            document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+
+</html>

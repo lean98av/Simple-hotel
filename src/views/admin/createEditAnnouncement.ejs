@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">ShopMaster</a>
+    </div>
+  </nav>
+
+  <!-- Admin Panel -->
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1><%- title %></h1>
+      <button class="btn btn-secondary" onclick="goToAnnouncements()">
+        ← Volver
+      </button>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><%= title.includes('Create') ? 'Crear Anuncio' : 'Editar Anuncio' %></h4>
+          </div>
+          <div class="card-body">
+            <form id="announcementForm" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="announcementName" class="form-label">Nombre *</label>
+                <input type="text" class="form-control" id="announcementName" required>
+                <div class="invalid-feedback">
+                  El nombre es requerido
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="announcementImage" class="form-label">Imagen 1</label>
+                <input type="file" name="images" class="form-control" id="announcementImage" accept="image/*">
+                <div class="form-text">
+                  Soporta imágenes JPG, PNG, GIF. Máximo 2MB.
+                </div>
+                <div id="imagePreview" class="mt-2" style="display: none;">
+                  <img id="imagePreviewImg" src="" alt="Vista previa" style="max-height: 200px;">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="announcementDescription" class="form-label">Descripción</label>
+                <textarea class="form-control" id="announcementDescription" rows="3"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="announcementStartDate" class="form-label">Fecha de Inicio</label>
+                <input type="date" class="form-control" id="announcementStartDate">
+              </div>
+
+              <div class="mb-3">
+                <label for="announcementEndDate" class="form-label">Fecha de Fin</label>
+                <input type="date" class="form-control" id="announcementEndDate">
+              </div>
+
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <%= title.includes('Create') ? 'Crear Anuncio' : 'Actualizar Anuncio' %>
+                </button>
+                <button onclick="goToAnnouncements()" class="btn btn-secondary">
+                  ← Volver
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content rounded-3">
+        <div class="modal-header">
+          <h5 class="modal-title text-success">¡Éxito!</h5>
+        </div>
+        <div class="modal-body">
+          <p id="successMessage" class="text-center">Anuncio creado exitosamente</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button id="backBtn" class="btn btn-secondary">Ir a anuncios</button>
+          <button id="continueBtn" class="btn btn-primary">Crear otro anuncio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+      <p class="mb-0">&copy; 2026 ShopMaster. Panel de Administración.</p>
+    </div>
+  </footer>
+
+  <script>
+    window.createEditAnnouncementData = {
+      title: <%- JSON.stringify(title) %>,
+      announcement: <%- JSON.stringify(announcement || null) %>,
+    };
+
+    function goToAnnouncements() {
+      window.location.href = '/admin/announcements';
+    }
+  </script>
+  <script src="/js/createEditAnnouncement/createEditAnnouncement.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

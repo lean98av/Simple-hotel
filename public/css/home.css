@@ -1,0 +1,476 @@
+/* ======================================================
+     STYLES: Home / Category / Announcements (Vista pública)
+
+     Propósito:
+     - Contiene estilos específicos de la página principal y vistas
+         relacionadas: hero banner, carruseles, tarjetas de categoría y
+         producto en presentación de lista.
+
+     Organización:
+     - Mantener cada bloque (hero, category-card, product-card, carousel)
+         agrupado y documentado localmente.
+     - Preferir clases específicas de vista (`.hero-banner`,
+         `.category-card`) para evitar colisiones con otros componentes.
+
+     Nota:
+     - Las variables de color/typography vienen de `tokens.css`.
+====================================================== */
+
+/* Hero carousel: desplazar abajo para evitar topbar fixed */
+.hero-carousel {
+    margin-top: 80px;
+    width: 100%;
+}
+
+.hero-banner {
+    background: linear-gradient(180deg, var(--hero-bg-start), var(--hero-bg-end));
+    color: var(--white);
+    padding: 4rem 0 5rem;
+    margin-bottom: 2.5rem;
+    margin-top: 80px;
+}
+
+.hero-banner h1 {
+    font-family: var(--font-heading);
+    font-size: 3.6rem;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.6rem;
+    color: var(--white) !important;
+    font-weight: 600;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    color: #ffffff !important;
+    max-width: 760px;
+    margin: 0 auto;
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+.hero-cta {
+    display: inline-block;
+    background-color: var(--hero-button-bg);
+    color: var(--hero-button-text);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    padding: .9rem 1.4rem;
+    box-shadow: var(--shadow-medium);
+}
+
+/* Headings: usar fuente serif para una estética elegante */
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    color: var(--text-dark);
+}
+
+/* Feature icons: color dorado */
+.feature-icon {
+    color: var(--accent-gold) !important;
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.carousel-caption h1, .carousel-caption h2 {
+    font-family: var(--font-heading);
+    color: #fff;
+}
+
+/* ===================================
+   CATEGORY CARDS
+   =================================== */
+.category-card {
+    position: relative;
+    display: block;
+    height: 250px;
+    border-radius: 24px;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.category-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-overlay h2 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+}
+
+.category-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ===================================
+   MAIN CONTENT
+   =================================== */
+main.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* ===================================
+   ANNOUNCEMENTS CAROUSEL
+   =================================== */
+.announcement-card {
+  position: relative;
+  display: block;
+  height: 400px;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.announcement-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+}
+
+
+.announcement-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+    background: #fff;
+}
+
+.announcement-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+}
+
+.announcement-overlay h2 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.announcement-overlay p {
+    margin: 0 0 0.5rem 0;
+}
+
+.announcement-overlay small {
+    display: block;
+    margin: 0.25rem 0;
+    font-size: 0.8rem;
+}
+
+.announcement-card:hover {
+    transform: translateY(-5px);
+}
+
+.announcement-card:hover img {
+    transform: none;
+}
+
+/* ===================================
+   PRODUCTS CAROUSEL
+   =================================== */
+.product-card-carousel {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    z-index: 1;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+#productsCarousel1 {
+    z-index: 2;
+}
+
+#productsCarousel2 {
+    z-index: 3;
+}
+.product-overlay-carousel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+}
+
+.product-price-carousel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.product-card-carousel img,
+.product-img-carousel {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+    display: block;
+}
+
+/* Announcement specific image */
+.announcement-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+}
+
+/* Logo fallback: keep logo fully visible */
+.img-logo {
+    object-fit: contain !important;
+    background: #fff;
+    padding: 12px;
+}
+
+.product-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+}
+
+.product-overlay h2 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.product-overlay .product-price {
+    margin: 0;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card:hover img {
+    transform: none;
+}
+
+/* BOTÓN "VER MÁS" - estilo reutilizable por la vista de categorías */
+.load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--white);
+    padding: .8rem 1.2rem;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    box-shadow: var(--shadow-light);
+    transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+.load-more-btn i{opacity:.9}
+.load-more-btn:disabled{opacity:.6;pointer-events:none}
+.load-more-btn:hover{transform: translateY(-3px);box-shadow: var(--shadow-medium)}
+
+/* Carousel controls */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.8;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-size: 100% 100%;
+  filter: invert(1);
+}
+
+/* Carousel wrapper */
+.carousel-wrapper {
+  position: relative;
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+@media (max-width: 768px) {
+    .hero-banner {
+        padding: 2rem 0;
+    }
+
+    .hero-banner h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .category-card {
+        height: 200px;
+    }
+
+    .category-overlay h2 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-banner {
+        padding: 1.5rem 0;
+    }
+
+    .hero-banner h1 {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .category-card {
+        height: 160px;
+    }
+
+    .category-overlay h2 {
+        font-size: 1.1rem;
+    }
+
+    .announcement-card {
+        height: 200px;
+    }
+
+    .announcement-overlay h2 {
+        font-size: 1.2rem;
+    }
+
+    .product-card {
+        height: 200px;
+    }
+
+    .product-overlay h2 {
+        font-size: 1rem;
+    }
+}
+
+/* ================================
+   GALLERY + SCROLL APPEAR EFFECT
+   ================================ */
+.gallery-section {
+    padding: 2.5rem 0 4rem;
+}
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+}
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+    display: block;
+}
+.gallery-item:hover img {
+    transform: scale(1.05) rotate(-0.5deg);
+}
+.gallery-caption {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+}
+
+/* Fade-up animation triggered on scroll */
+.fade-up {
+    transform: translateY(24px);
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(.2,.8,.2,1), opacity 0.7s ease;
+}
+.fade-up.in-view {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Slight decorative parallax divider */
+.parallax-divider {
+    background-image: url('/images/exclusive.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 220px;
+    display: block;
+    filter: saturate(0.95) contrast(0.95) brightness(0.85);
+}
+
+@media (max-width: 768px) {
+    .gallery-caption { left: .6rem; bottom: .6rem; }
+    .parallax-divider { background-attachment: scroll; }
+}
+
+/* Features showcase (bloques alternados) */
+.features-showcase { padding: 3rem 0; }
+.feature-block { padding: 1rem 0; }
+.feature-img img { width: 100%; height: 100%; object-fit: cover; }
+.feature-desc h3 { font-weight: 700; margin-bottom: .8rem; }
+.feature-desc p.lead { font-size: 1.05rem; margin-bottom: .6rem; }
+.feature-desc p.text-muted { margin-bottom: 0; }
+
+/* Ajustes responsivos */
+@media (max-width: 767px) {
+    .feature-block { text-align: center; }
+    .feature-block .feature-desc { margin-top: 1rem; }
+}
+
+

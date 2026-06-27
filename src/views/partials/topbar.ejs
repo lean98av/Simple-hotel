@@ -1,0 +1,90 @@
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container px-3">
+
+        <!-- LOGO -->
+        <a class="navbar-brand d-flex align-items-center ms-2 ms-lg-0" href="/">
+            <span class="navbar-logo-container">
+                <img src="/images/logo.png" alt="ShopMaster" class="navbar-logo" />
+            </span>
+        </a>
+
+        <!-- RIGHT MOBILE ACTIONS -->
+
+        <div class="d-flex align-items-center gap-2 d-lg-none ms-auto flex-shrink-0">
+            <!-- MOBILE CART -->
+
+           <a href="/cart" class="mobile-cart-floating">
+    <i class="fas fa-shopping-bag"></i>
+    <span id="mobileCartBadge" class="cart-badge" style="display:none;"></span>
+</a>
+
+            <!-- HAMBURGER -->
+
+            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <!-- DESKTOP -->
+            <ul class="navbar-nav ms-auto d-none d-lg-flex align-items-center">
+
+                <!-- FAQ -->
+                <li class="nav-item ms-3">
+                    <a href="/faq" class="nav-link">Preguntas Frecuentes</a>
+                </li>
+
+                <!-- CONTACTO -->
+                <li class="nav-item ms-2">
+                    <a href="/contact" class="nav-link">Contacto</a>
+                </li>
+                <!-- CATEGORÍAS -->
+                <li class="nav-item mega-dropdown">
+                    <a class="nav-link mega-toggle" href="#">Categorías</a>
+                    <div class="mega-menu">
+                        <div class="mega-grid" style="z-index: 5000;">
+                          
+                        </div>
+                    </div>
+                </li>
+
+                <!-- CARRITO -->
+                <li class="nav-item ms-3">
+    <a href="/cart" class="cart-btn">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-text">Carrito</span>
+        <span id="desktopCartBadge" class="cart-badge" style="display:none;"></span>
+    </a>
+</li>
+
+            </ul>
+
+            <!-- MOBILE CATEGORY GRID -->
+          <!-- MOBILE MENU -->
+
+<div class="mobile-menu-links d-lg-none">
+    <a href="/faq" class="mobile-menu-btn">
+        <i class="fas fa-circle-question"></i>
+        Preguntas Frecuentes
+    </a>
+    <a href="/contact" class="mobile-menu-btn">
+        <i class="fas fa-envelope"></i>
+        Contacto
+    </a>
+</div>
+
+        </div>
+
+    </div>
+</nav>
+
+<!-- WHATSAPP FLOAT -->
+
+<a href="https://wa.me/<%= appSettings.whatsapp %>" target="_blank" class="floating-whatsapp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<script src="/js/topbar.js"></script>

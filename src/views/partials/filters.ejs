@@ -1,0 +1,110 @@
+<div class="filters-section mb-4">
+
+    <div class="row g-3">
+
+        <div class="col-md-4 col-sm-6">
+
+            <label class="form-label fw-bold">
+
+                Ordenar por precio
+
+            </label>
+
+            <div class="dropdown custom-filter-dropdown">
+
+                <button
+                    type="button"
+                    class="filter-dropdown-btn dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    data-bs-display="static"
+                    aria-expanded="false"
+                    style="z-index: 2000;">
+
+                    Descendente
+
+                </button>
+
+                <ul class="dropdown-menu custom-dropdown-menu shadow border-0"
+                    style="z-index: 2500;">
+
+                    <li>
+
+                        <a
+                            class="dropdown-item"
+                            href="#"
+                            data-value="ASC">
+
+                            Ascendente
+
+                        </a>
+
+                    </li>
+
+                    <li>
+
+                        <a
+                            class="dropdown-item active"
+                            href="#"
+                            data-value="DESC">
+
+                            Descendente
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <input
+                type="hidden"
+                id="orderSelect"
+                value="DESC">
+
+        </div>
+
+    </div>
+
+</div>
+
+   <script>
+        document.querySelectorAll('.custom-dropdown-menu .dropdown-item')
+          .forEach(item => {
+
+            item.addEventListener('click', e => {
+
+              e.preventDefault();
+
+              const value =
+                item.dataset.value;
+
+              const text =
+                item.innerText.trim();
+
+              // INPUT
+
+              document.getElementById('orderSelect').value =
+                value;
+
+              // TEXTO BOTON
+
+              document.querySelector('.filter-dropdown-btn').innerText =
+                `${text}`;
+
+              // ACTIVE
+
+              document.querySelectorAll('.custom-dropdown-menu .dropdown-item')
+                .forEach(i => i.classList.remove('active'));
+
+              item.classList.add('active');
+
+              // DISPARAR CAMBIO
+
+              document.getElementById('orderSelect')
+                .dispatchEvent(new Event('change'));
+            });
+
+          });
+
+      </script>

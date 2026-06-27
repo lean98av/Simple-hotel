@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">ShopMaster</a>
+    </div>
+  </nav>
+
+  <!-- Admin Panel -->
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1><%- title %></h1>
+      <button class="btn btn-secondary" onclick="goToAdmin()">
+        ← Volver al Admin
+      </button>
+    </div>
+
+    <!-- Fila con botón -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div></div>
+      <div>
+        <button onclick="goToCreate()" class="btn btn-primary">
+          ➕ Crear Anuncio
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <% function getImageMimeType(filename) {
+       const ext = filename?.split('.').pop()?.toLowerCase();
+       const types = {
+         jpg: 'image/jpeg',
+         jpeg: 'image/jpeg',
+         png: 'image/png',
+         gif: 'image/gif',
+         webp: 'image/webp',
+       };
+       return types[ext] || 'image/jpeg';
+     }
+  %>
+
+  <!-- Announcement List -->
+  <div class="container mt-4">
+    <% if (announcements.length === 0) { %>
+      <div class="alert alert-info">No se encontraron anuncios.</div>
+    <% } else { %>
+      <div class="row">
+        <% announcements.forEach(announcement => { %>
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <% if (announcement.images && announcement.images.length > 0) { %>
+                  <img src="data:<%= getImageMimeType(announcement.images[0].name) %>;base64,<%= announcement.images[0].file %>"
+                      alt="<%= announcement.name %> Imagen 1"
+                      class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
+                <% } %>
+                <h5 class="card-title"><%= announcement.name %></h5>
+                <% if (announcement.description) { %>
+                  <p class="card-text text-muted"><strong>Descripción:</strong> <%= announcement.description %></p>
+                <% } %>
+                <p class="card-text">
+                  <small class="text-muted">ID: <%= announcement.id %></small>
+                </p>
+                <% if (announcement.startDate) { %>
+                  <p class="card-text text-muted">
+                    Inicio: <%= announcement.startDate.toLocaleDateString() %>
+                  </p>
+                <% } %>
+                <% if (announcement.endDate) { %>
+                  <p class="card-text text-muted">
+                    Fin: <%= announcement.endDate.toLocaleDateString() %>
+                  </p>
+                <% } %>
+                <div class="d-flex gap-2">
+                  <button onclick="editAnnouncement(<%= announcement.id %>)" class="btn btn-sm btn-warning">
+                    ✏️ Editar
+                  </button>
+                  <button onclick="deleteAnnouncement(<%= announcement.id %>)" class="btn btn-sm btn-danger">
+                      🗑️ Eliminar
+                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+ <script src="/js/createEditAnnouncement/createEditAnnouncement.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/modal.js"></script>
+  <script>
+    // Authentication uses cookie (adminToken). No client-side stored password.
+
+    window.adminAnnouncementsData = {
+      announcements: <%- JSON.stringify(announcements) %>,
+    };
+
+    function goToAdmin() {
+      window.location.href = '/admin';
+    }
+
+    function goToCreate() {
+      window.location.href = '/admin/announcements/create';
+    }
+
+    async function deleteAnnouncement(id) {
+      // Mostrar modal de confirmación
+      showConfirmModal('¿Eliminar anuncio?', '¿Estás seguro de que deseas eliminar este anuncio? Esta acción no se puede deshacer.', () => {
+        deleteAnnouncementConfirmed(id);
+      });
+    }
+
+    function deleteAnnouncementConfirmed(id) {
+      try {
+        const response = fetch('/admin/announcements/' + id, {
+          method: 'DELETE',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        response.then(async (res) => {
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            showModal('Anuncio eliminado correctamente', '', false);
+            window.location.reload();
+          } else {
+            showModal('Error al eliminar anuncio', data.message || '', false);
+          }
+        });
+      } catch (err) {
+        showModal('Error al eliminar anuncio', '', false);
+      }
+    }
+
+    function editAnnouncement(id) {
+      window.location.href = '/admin/announcements/' + id + '/edit';
+    }
+  </script>
+
+  <%- include('partials/globalModal') %>
+</body>
+</html>

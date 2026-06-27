@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.name %> - Hotel Aurora</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/tokens.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/detail.css">
+</head>
+
+<% function getImageMimeType(filename) { const ext=filename?.split('.').pop()?.toLowerCase(); const types={
+    jpg: 'image/jpeg' , jpeg: 'image/jpeg' , png: 'image/png' , gif: 'image/gif' , webp: 'image/webp' , }; return
+    types[ext] || 'image/jpeg' ; } %>
+
+<body>
+    <div class="container mt-4 pt-5"></div>
+    <%- include('partials/topbar') %>
+    <main class="container mb-5 mt-5 pt-5">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <% if (product.images && product.images.length > 0) { %>
+                        <!-- Imagen principal -->
+                        <img id="mainImage"
+                            src="data:<%= getImageMimeType(product.images[0].name) %>;base64,<%= product.images[0].file %>"
+                            alt="<%= product.name %>" class="card-img-top product-img mb-3"
+                            style="max-height:400px; object-fit:contain;">
+
+                        <!-- Miniaturas -->
+                        <div class="d-flex justify-content-center gap-2 flex-wrap pb-3">
+                            <% product.images.forEach((img, idx)=> { %>
+                                <img src="data:<%= getImageMimeType(img.name) %>;base64,<%= img.file %>"
+                                    alt="<%= product.name %> <%= idx+1 %>" class="img-thumbnail"
+                                    style="width:80px; height:80px; object-fit:cover; cursor:pointer;"
+                                    onclick="document.getElementById('mainImage').src=this.src">
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <img id="mainImage" src="/images/logo.png" alt="<%= product.name %>"
+                            class="card-img-top product-img">
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- INFO -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <div class="card-body">
+                        <!-- TITULO -->
+                        <h2 id="detailTitle" class="mb-3">
+                            <%= product.name %>
+                        </h2>
+                                <!-- PRECIO POR NOCHE -->
+                                <div id="detailPrice" class="modal-price mb-3">
+                                    $<%= Number(product.price).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %> <small class="text-muted">/ noche</small>
+                                </div>
+                        <!-- DETALLES DE LA HABITACIÓN -->
+                        <div class="modal-specs mb-4">
+                            <h6>Descripción</h6>
+                            <p id="detailDescription"><%= product.description || 'Habitación confortable y bien equipada.' %></p>
+
+                            <div class="row">
+                              <div class="col-6"><strong>Capacidad:</strong> <span><%= product.capacity || '2' %> personas</span></div>
+                              <div class="col-6"><strong>Cama:</strong> <span><%= product.bedType || 'King' %></span></div>
+                            </div>
+
+                            <hr>
+                            <h6>Amenities</h6>
+                            <div class="mb-2">
+                                <span class="me-3"><i class="fa-solid fa-wifi"></i> Wifi</span>
+                                <span class="me-3"><i class="fa-solid fa-tv"></i> Smart TV</span>
+                                <span class="me-3"><i class="fa-solid fa-bath"></i> Baño privado</span>
+                                <span class="me-3"><i class="fa-solid fa-mug-hot"></i> Cafetera</span>
+                            </div>
+                        </div>
+
+                        <!-- FORMULARIO DE RESERVA -->
+                        <div class="modal-specs mb-4">
+                            <h6>Fechas y huéspedes</h6>
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Check-in</label>
+                                    <input type="date" id="checkin" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Check-out</label>
+                                    <input type="date" id="checkout" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Huéspedes</label>
+                                    <select id="guests" class="form-select">
+                                        <option value="1">1</option>
+                                        <option value="2" selected>2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- BOTONES -->
+
+                        <!-- Comprar ahora -->
+                        <button id="buyNowBtn" class="btn btn-primary w-100 mb-3"
+                            data-product-id="<%= product.id %>">
+                            <i class="fas fa-door-open"></i>
+                            Reservar Ahora
+                        </button>
+                        <button id="addToCartBtn" class="btn btn-outline-primary w-100"
+                            data-product-id="<%= product.id %>">
+                            <i class="fas fa-calendar-plus"></i>
+                            Consultar Disponibilidad
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="/js/updateTopBar.js"></script> -->
+    <script>
+        async function addProduct(productId, redirect = false) {
+            try {
+                const response =
+                    await fetch('/cart/add/' + productId);
+                const data =
+                    await response.json();
+                if (!data.success) {
+                    return;
+                }
+                const cart =
+                    JSON.parse(localStorage.getItem('cart')) || [];
+                const existing =
+                    cart.find(x => x.id == data.product.id);
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    cart.push(data.product);
+                }
+                localStorage.setItem(
+                    'cart',
+                    JSON.stringify(cart)
+                );
+                if (typeof updateTopBar === 'function') {
+                    updateTopBar();
+                }
+                if (redirect) {
+                    window.location.href = '/checkout';
+                } else {
+                    const button =
+                        document.getElementById('addToCartBtn');
+                    const originalHtml =
+                        button.innerHTML;
+                    button.innerHTML =
+                        '<i class="fas fa-check"></i> Agregado';
+                    button.disabled = true;
+                    setTimeout(() => {
+                        button.innerHTML = originalHtml;
+                        button.disabled = false;
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error(
+                    'Error al agregar al carrito:',
+                    error
+                );
+            }
+        }
+        /* =========================
+           AGREGAR AL CARRITO
+        ========================= */
+
+        const addBtn = document.getElementById('addToCartBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => {
+                const productId = parseInt(addBtn.dataset.productId);
+                // guardar búsqueda/consulta de disponibilidad localmente
+                const checkin = document.getElementById('checkin')?.value;
+                const checkout = document.getElementById('checkout')?.value;
+                const guests = document.getElementById('guests')?.value || 1;
+                if (!checkin || !checkout) {
+                    alert('Por favor selecciona fechas de check-in y check-out para consultar disponibilidad.');
+                    return;
+                }
+                const booking = { productId, checkin, checkout, guests };
+                localStorage.setItem('booking', JSON.stringify(booking));
+                addProduct(productId);
+            });
+        }
+
+        /* =========================
+           COMPRAR AHORA
+        ========================= */
+        const buyBtn = document.getElementById('buyNowBtn');
+        if (buyBtn) {
+            buyBtn.addEventListener('click', () => {
+                const productId = parseInt(buyBtn.dataset.productId);
+                const checkin = document.getElementById('checkin')?.value;
+                const checkout = document.getElementById('checkout')?.value;
+                const guests = document.getElementById('guests')?.value || 1;
+                if (!checkin || !checkout) {
+                    alert('Por favor selecciona check-in y check-out antes de reservar.');
+                    return;
+                }
+                if (new Date(checkin) >= new Date(checkout)) {
+                    alert('La fecha de check-out debe ser posterior al check-in.');
+                    return;
+                }
+                const booking = { productId, checkin, checkout, guests };
+                localStorage.setItem('booking', JSON.stringify(booking));
+                addProduct(productId, true);
+            });
+        }
+
+    </script>
+</body>
+</html>

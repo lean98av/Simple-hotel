@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/admin-theme.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">ShopMaster</a>
+    </div>
+  </nav>
+
+  <!-- Admin Panel -->
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1><%- title %></h1>
+      <button onclick="goToAdmin()" class="btn btn-secondary">
+        ← Volver al admin
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="mb-4 d-flex flex-wrap align-items-center gap-3">
+      <div>
+        <label for="statusFilter" class="form-label mb-0">Estado:</label>
+        <select id="statusFilter" class="form-select w-auto d-inline-block" onchange="applyFilters()">
+          <option value="all" <%= statusFilter === 'all' ? 'selected' : '' %>>Todos</option>
+          <option value="Nuevo" <%= statusFilter === 'Nuevo' ? 'selected' : '' %>>Nuevo</option>
+          <option value="Procesando" <%= statusFilter === 'Procesando' ? 'selected' : '' %>>Procesando</option>
+          <option value="Pagado" <%= statusFilter === 'Pagado' ? 'selected' : '' %>>Pagado</option>
+          <option value="Enviado" <%= statusFilter === 'Enviado' ? 'selected' : '' %>>Enviado</option>
+          <option value="Cancelado" <%= statusFilter === 'Cancelado' ? 'selected' : '' %>>Cancelado</option>
+        </select>
+      </div>
+    </div>
+
+    <% if (orders.length === 0) { %>
+      <div class="alert alert-info">
+        No se encontraron ordenes.
+      </div>
+    <% } else { %>
+      <div class="row" id="ordersContainer">
+        <% orders.forEach(order => { %>
+          <div class="col-md-4 mb-4 order-card"
+               data-id="<%= order.id %>"
+               data-total="<%= order.total %>"
+               data-date="<%= new Date(order.createdAt).getTime() %>"
+               data-status="<%= order.status %>">
+            <div class="card shadow-sm h-100" role="button" data-bs-toggle="modal" data-bs-target="#orderModal-<%= order.id %>">
+              <div class="card-body">
+                <h5 class="card-title">Orden #<%= order.id %></h5>
+                <p class="card-text mb-1"><strong>Cliente:</strong> <%= order.clientName %></p>
+                <p class="card-text mb-1">
+                  <strong>Estado:</strong>
+                  <span class="badge <%= order.status === 'Nuevo' ? 'badge-nuevo' :
+                        order.status === 'Procesando' ? 'badge-procesando' :
+                        order.status === 'Pagado' ? 'badge-pagado' : 'badge-enviado' %>">
+                    <%= order.status %>
+                  </span>
+                </p>
+                <p class="card-text mb-1"><strong>Total:</strong> $<%= Number(order.total).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></p>
+                <p class="card-text mb-1">
+                  <strong>Fecha:</strong>
+                  <%= new Date(order.createdAt).toLocaleString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal -->
+          <div class="modal fade" id="orderModal-<%= order.id %>" tabindex="-1" aria-labelledby="orderModalLabel-<%= order.id %>" aria-hidden="true" data-order-status="<%= order.status %>">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content
+                <%= order.status === 'Nuevo' ? 'border-warning' :
+                    order.status === 'Procesando' ? 'border-info' :
+                    order.status === 'Pagado' ? 'border-success' : 'border-danger' %>">
+
+                <div class="modal-header
+                  <%= order.status === 'Nuevo' ? 'bg-warning text-dark' :
+                      order.status === 'Procesando' ? 'bg-info text-dark' :
+                      order.status === 'Pagado' ? 'bg-success text-white' : 'bg-danger text-white' %>">
+                  <h5 class="modal-title" id="orderModalLabel-<%= order.id %>">
+                    Detalles de Orden #<%= order.id %>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                  <p><strong>Cliente:</strong> <%= order.clientName %></p>
+                  <p><strong>Teléfono:</strong> <%= order.clientPhone %></p>
+                  <p><strong>Dirección:</strong> <%= order.address %></p>
+                  <p><strong>Notas del Cliente:</strong> <%= order.clientNotes %></p>
+                  <p><strong>Total:</strong> $<%= Number(order.total).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></p>
+                  <p><strong>Estado:</strong>
+                    <span class="badge <%= order.status === 'Nuevo' ? 'badge-nuevo' :
+                          order.status === 'Procesando' ? 'badge-procesando' :
+                          order.status === 'Pagado' ? 'badge-pagado' : 'badge-enviado' %>">
+                      <%= order.status %>
+                    </span>
+                  </p>
+                  <div class="mt-3">
+                  <label for="statusSelect-<%= order.id %>" class="form-label">Cambiar estado:</label>
+                  <select id="statusSelect-<%= order.id %>" class="form-select"
+                          onchange="updateOrderStatus(<%= order.id %>, this.value)">
+                    <option value="Nuevo" <%= order.status === 'Nuevo' ? 'selected' : '' %>>Nuevo</option>
+                    <option value="Procesando" <%= order.status === 'Procesando' ? 'selected' : '' %>>Procesando</option>
+                    <option value="Pagado" <%= order.status === 'Pagado' ? 'selected' : '' %>>Pagado</option>
+                    <option value="Enviado" <%= order.status === 'Enviado' ? 'selected' : '' %>>Enviado</option>
+                    <option value="Cancelado" <%= order.status === 'Cancelado' ? 'selected' : '' %>>Cancelado</option>
+                  </select>
+                </div>
+                  <p><strong>Fecha de creación:</strong>
+                    <%= new Date(order.createdAt).toLocaleString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
+                  </p>
+                  <hr>
+                  <h6>Productos:</h6>
+                  <ul class="list-group">
+                    <% order.products.forEach(p => { %>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong><%= p.productName %></strong> (ID: <%= p.productId %>)</span>
+                        <span>$<%= Number(p.productPrice).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></span>
+                      </li>
+                    <% }) %>
+                  </ul>
+                </div>
+
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <% }) %>
+      </div>
+
+      <!-- Ver más -->
+      <div class="mt-4 text-center">
+        <button class="btn btn-secondary" id="loadMore" onclick="loadMoreOrders()">
+          <span id="loadMoreText">Ver más</span>
+          <span class="spinner-border spinner-border-sm d-none" id="loadMoreSpinner"></span>
+        </button>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+      <p class="mb-0">&copy; 2026 ShopMaster. Panel de Administración.</p>
+    </div>
+  </footer>
+
+  <style>
+    /* Estilos para cada estado */
+    .badge-nuevo {
+      background-color: #ffc107;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .badge-procesando {
+      background-color: #17a2b8;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .badge-pagado {
+      background-color: #28a745;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .badge-enviado {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .badge-cancelado {
+      background-color: #dc3545;
+      color: #fff;
+      font-weight: 600;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/modal.js"></script>
+  <script>
+    let currentPage = 1;
+
+    // Legacy 'pass' removed; authentication uses cookie (adminToken).
+
+    async function loadMoreOrders() {
+  const loadMoreBtn = document.getElementById('loadMore');
+  const loadMoreText = document.getElementById('loadMoreText');
+  const loadMoreSpinner = document.getElementById('loadMoreSpinner');
+
+  loadMoreBtn.disabled = true;
+  loadMoreText.classList.add('d-none');
+  loadMoreSpinner.classList.remove('d-none');
+
+  try {
+    currentPage++;
+    const statusFilter = document.getElementById('statusFilter')?.value || 'all';
+    const response = await fetch(
+      `/admin/orders/loadMore?page=${currentPage}&status=${encodeURIComponent(statusFilter)}`
+    );
+    const data = await response.json();
+
+    if (data.orders && data.orders.length > 0) {
+      const container = document.getElementById('ordersContainer');
+      const newOrdersHtml = data.orders.map(order => {
+        const date = new Date(order.createdAt);
+        return `
+          <div class="col-md-4 mb-4 order-card"
+               data-id="${order.id}"
+               data-total="${order.total}"
+               data-date="${date.getTime()}"
+               data-status="${order.status}">
+            <div class="card shadow-sm h-100" role="button" data-bs-toggle="modal" data-bs-target="#orderModal-${order.id}">
+              <div class="card-body">
+                <h5 class="card-title">Orden #${order.id}</h5>
+                <p class="card-text mb-1"><strong>Cliente:</strong> ${order.clientName}</p>
+                <p class="card-text mb-1">
+                  <strong>Estado:</strong>
+                  <span class="badge ${order.status === 'Nuevo' ? 'badge-nuevo' :
+                        order.status === 'Procesando' ? 'badge-procesando' :
+                        order.status === 'Pagado' ? 'badge-pagado' : 'badge-enviado'}">
+                    ${order.status}
+                  </span>
+                </p>
+                <p class="card-text mb-1"><strong>Total:</strong> $${Number(order.total).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                <p class="card-text mb-1">
+                  <strong>Fecha:</strong>
+                  ${date.toLocaleString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.insertAdjacentHTML('beforeend', newOrdersHtml);
+    }
+  } catch (error) {
+    console.error(error);
+    showModal('Error al cargar más órdenes', '', false);
+  } finally {
+    loadMoreBtn.disabled = false;
+    loadMoreText.classList.remove('d-none');
+    loadMoreSpinner.classList.add('d-none');
+  }
+}
+ async function applyFilters() {
+  const statusFilter = document.getElementById('statusFilter').value || 'all';
+
+  const query = new URLSearchParams(window.location.search);
+
+  // eliminar cualquier pass previo
+  query.delete('pass');
+
+  // setear el filtro de estado
+  query.set('status', statusFilter);
+
+  // construir la URL
+  window.location.href = `/admin/orders?${query.toString()}`;
+}
+
+
+    function goToAdmin() {
+      window.location.href = '/admin';
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+    try {
+      const response = await fetch(`/admin/orders/${orderId}/update`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: orderId, status: newStatus })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el estado');
+      }
+
+      const result = await response.json();
+
+      // Actualizar el badge en la card y modal
+      const badgeElements = document.querySelectorAll(
+        `[data-id="${orderId}"] .badge, #orderModal-${orderId} .badge`
+      );
+      badgeElements.forEach(badge => {
+        badge.textContent = newStatus;
+        badge.className = 'badge ' + (
+          newStatus === 'Nuevo' ? 'badge-nuevo' :
+          newStatus === 'Procesando' ? 'badge-procesando' :
+          newStatus === 'Pagado' ? 'badge-pagado' :
+          newStatus === 'Enviado' ? 'badge-enviado' : 'badge-cancelado'
+        );
+      });
+
+      // Actualizar el color del modal header
+      const modalHeader = document.querySelector(`#orderModal-${orderId} .modal-header`);
+      if (modalHeader) {
+        if (newStatus === 'Nuevo') {
+          modalHeader.className = 'modal-header bg-warning text-dark';
+        } else if (newStatus === 'Procesando') {
+          modalHeader.className = 'modal-header bg-info text-dark';
+        } else if (newStatus === 'Pagado') {
+          modalHeader.className = 'modal-header bg-success text-white';
+        } else if (newStatus === 'Enviado') {
+          modalHeader.className = 'modal-header bg-primary text-white';
+        } else if (newStatus === 'Cancelado') {
+          modalHeader.className = 'modal-header bg-danger text-white';
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      showModal('No se pudo actualizar el estado', '', false);
+    }
+}
+
+  </script>
+
+  <%- include('partials/globalModal') %>
+</body>
+</html>

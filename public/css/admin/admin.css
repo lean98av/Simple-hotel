@@ -1,0 +1,779 @@
+/* ======================================================
+     ADMIN PANEL STYLES (Backoffice)
+
+     Propósito:
+     - Estilos destinados exclusivamente al panel de administración
+     - Incluye variables, tablas, forms, modales y helpers usados
+         por las vistas en `src/views/admin/`.
+
+     Organización:
+     - Mantener aquí cualquier ajuste visual que no deba afectar
+         al frontend público. Si necesitas compartir variables con
+         el frontend, crea variables específicas en `tokens.css`.
+
+     Notas:
+     - Evitar importar o depender de `base.css`/`home.css` desde
+         las vistas del admin; este fichero es la fuente de verdad
+         para la apariencia del backoffice.
+====================================================== */
+
+:root {
+
+    --primary-color: #e6cddf;
+    --primary-dark: #c5a9d6;
+
+    --light-bg: #fff;
+    --page-bg: #fdf6f9;
+
+    --text-dark: #5c3c2e;
+    --text-light: #7a5b55;
+
+    --border-color: #eadce7;
+
+    --success-color: #56c271;
+    --danger-color: #ff6b6b;
+    --warning-color: #ffbf69;
+    --info-color: #74c0fc;
+
+    --shadow-light: 0 4px 14px rgba(0,0,0,0.05);
+    --shadow-medium: 0 8px 24px rgba(0,0,0,0.08);
+
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+
+    --font-main: 'Montserrat', sans-serif;
+}
+
+/* ===================================
+   GLOBAL
+=================================== */
+
+body {
+
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f9e4ee 100%
+    );
+
+    font-family: var(--font-main);
+
+    color: var(--text-dark);
+
+    min-height: 100vh;
+}
+
+/* ===================================
+   NAVBAR
+=================================== */
+
+.navbar {
+
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.96),
+        rgba(246,229,235,0.96)
+    ) !important;
+
+    border-bottom: 1px solid var(--border-color);
+
+    box-shadow: var(--shadow-light);
+
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+
+    color: #6d3f2f !important;
+
+    font-size: 1.8rem;
+
+    font-weight: 700;
+}
+
+/* ===================================
+   PAGE HEADER
+=================================== */
+
+.admin-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 2rem;
+
+    gap: 1rem;
+
+    flex-wrap: wrap;
+}
+
+.admin-title {
+
+    font-size: 2rem;
+
+    font-weight: 700;
+
+    margin: 0;
+
+    color: #6d3f2f;
+}
+
+/* ===================================
+   BUTTONS
+=================================== */
+
+.btn {
+
+    border-radius: 14px !important;
+
+    font-weight: 600;
+
+    padding: 0.7rem 1rem;
+
+    transition: all 0.25s ease;
+
+    border: none;
+}
+
+.btn-primary {
+
+    background: var(--primary-color);
+
+    color: white;
+}
+
+.btn-primary:hover {
+
+    background: var(--primary-dark);
+
+    transform: translateY(-2px);
+}
+
+/* ===================================
+   TABLE
+=================================== */
+
+.table-responsive {
+
+    background: white;
+
+    border-radius: var(--radius-lg);
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-light);
+
+    margin-top: 2rem;
+}
+
+.table {
+
+    margin-bottom: 0;
+}
+
+.table thead {
+
+    background: transparent;
+}
+
+.table thead th {
+
+    background: #f7e7ee;
+
+    color: #6d3f2f;
+
+    font-size: 0.9rem;
+
+    font-weight: 700;
+
+    letter-spacing: .02em;
+
+    text-transform: uppercase;
+
+    border: none !important;
+
+    padding: 1rem 1.2rem;
+
+    white-space: nowrap;
+}
+
+.table thead th:first-child {
+
+    border-top-left-radius: 18px;
+}
+
+.table thead th:last-child {
+
+    border-top-right-radius: 18px;
+}
+.table tbody td {
+
+    vertical-align: middle;
+
+    padding: 1rem;
+
+    border-color: #f3e5ed;
+}
+
+.table tbody tr {
+
+    transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+
+    background: #fff8fb;
+}
+
+/* ===================================
+   PRODUCT IMAGE
+=================================== */
+
+.product-thumb {
+
+    width: 75px;
+
+    height: 75px;
+
+    object-fit: cover;
+
+    border-radius: 16px;
+
+    border: 2px solid #f0e1ea;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.no-image {
+
+    width: 75px;
+
+    height: 75px;
+
+    border-radius: 16px;
+
+    background: #f7edf3;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 0.8rem;
+
+    color: var(--text-light);
+}
+
+/* ===================================
+   BADGES
+=================================== */
+
+.badge {
+
+    padding: 0.55rem 0.8rem;
+
+    border-radius: 999px;
+
+    font-weight: 600;
+
+    font-size: 0.75rem;
+}
+
+.bg-success {
+
+    background: var(--success-color) !important;
+}
+
+.bg-danger {
+
+    background: var(--danger-color) !important;
+}
+
+.bg-info {
+
+    background: var(--info-color) !important;
+}
+
+.bg-secondary {
+
+    background: #b8a8b2 !important;
+}
+
+/* ===================================
+   MODAL
+=================================== */
+
+.modal-content {
+
+    border: none;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-medium);
+}
+
+.modal-header {
+
+    background: linear-gradient(
+        180deg,
+        #f9e6ee,
+        #f3dce7
+    );
+
+    border-bottom: none;
+}
+
+.modal-title {
+
+    color: #6d3f2f;
+
+    font-weight: 700;
+}
+
+.modal-body {
+
+    padding: 2rem;
+}
+
+.form-control,
+.form-select {
+
+    border-radius: 14px;
+
+    border: 1px solid #eadce7;
+
+    padding: 0.85rem 1rem;
+
+    box-shadow: none !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+
+    border-color: var(--primary-dark);
+
+    box-shadow: 0 0 0 0.2rem rgba(197,169,214,0.2) !important;
+}
+
+.form-label {
+
+    font-weight: 600;
+
+    color: #6d3f2f;
+}
+
+/* ===================================
+   SWITCH
+=================================== */
+
+.form-check-input {
+
+    width: 3rem;
+
+    height: 1.5rem;
+
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+
+    background-color: var(--primary-dark);
+
+    border-color: var(--primary-dark);
+}
+
+/* ===================================
+   FOOTER
+=================================== */
+
+footer {
+
+    margin-top: 5rem;
+
+    background: linear-gradient(
+        180deg,
+        rgba(246,229,235,0.95),
+        rgba(240,214,226,0.95)
+    ) !important;
+
+    border-top: 1px solid var(--border-color);
+}
+
+footer p {
+
+    color: var(--text-light);
+
+    margin: 0;
+}
+
+/* ===================================
+   EMPTY STATE
+=================================== */
+
+.alert-info {
+
+    background: #fff7fb;
+
+    border: 1px solid #f1dce8;
+
+    color: #7a5b55;
+
+    border-radius: 18px;
+
+    padding: 1rem 1.2rem;
+}
+
+/* ===================================
+   RESPONSIVE
+=================================== */
+
+@media (max-width: 992px) {
+
+    .table-responsive {
+
+        background: transparent;
+
+        box-shadow: none;
+
+        overflow: visible;
+    }
+
+    .table {
+
+        border: none;
+    }
+
+    .table thead {
+
+        display: none;
+    }
+
+    .table,
+    .table tbody {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 1rem;
+    }
+
+    .table tr {
+
+        display: flex;
+
+        flex-direction: column;
+
+        background: rgba(255,255,255,0.95);
+
+        border-radius: 24px;
+
+        padding: 1rem;
+
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+
+        border: 1px solid #f1dfe8;
+
+        overflow: hidden;
+
+        backdrop-filter: blur(10px);
+    }
+
+    .table td {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 1rem;
+
+        width: 100%;
+
+        border: none !important;
+
+        padding: 0.85rem 0;
+
+        border-bottom: 1px solid #f7e7ee !important;
+
+        font-size: .95rem;
+    }
+
+    .table td:last-child {
+
+        border-bottom: none !important;
+
+        padding-bottom: 0;
+    }
+
+    .table td::before {
+
+        content: attr(data-label);
+
+        font-weight: 700;
+
+        color: #6d3f2f;
+
+        font-size: .82rem;
+
+        text-transform: uppercase;
+
+        letter-spacing: .04em;
+
+        min-width: 90px;
+
+        flex-shrink: 0;
+    }
+
+    /* Imagen */
+
+    .product-thumb,
+    .no-image {
+
+        width: 65px;
+
+        height: 65px;
+
+        border-radius: 16px;
+    }
+
+    /* Acciones */
+
+    .action-buttons {
+
+        width: 100%;
+
+        justify-content: flex-end;
+
+        gap: .75rem;
+    }
+
+    .action-btn {
+
+        width: 42px;
+
+        height: 42px;
+
+        border-radius: 14px;
+
+        font-size: 1rem;
+    }
+
+    /* Badges */
+
+    .badge {
+
+        font-size: .72rem;
+
+        padding: .55rem .8rem;
+    }
+
+    /* Header */
+
+    .admin-header {
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .admin-header .btn {
+
+        width: 100%;
+    }
+
+    .admin-title {
+
+        font-size: 1.7rem;
+
+        text-align: center;
+    }
+}
+
+/* ===================================
+   EXTRA SMALL DEVICES
+=================================== */
+
+@media (max-width: 576px) {
+
+    .container {
+
+        padding-left: 1rem;
+
+        padding-right: 1rem;
+    }
+
+    .admin-title {
+
+        font-size: 1.45rem;
+    }
+
+    .table tr {
+
+        border-radius: 20px;
+
+        padding: .9rem;
+    }
+
+    .table td {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: .45rem;
+
+        padding: .75rem 0;
+    }
+
+    .table td::before {
+
+        min-width: auto;
+
+        margin-bottom: .15rem;
+    }
+
+    .action-buttons {
+
+        justify-content: flex-start;
+    }
+
+    .action-btn {
+
+        width: 44px;
+
+        height: 44px;
+    }
+
+    .btn {
+
+        width: 100%;
+    }
+
+    .modal-body {
+
+        padding: 1.25rem;
+    }
+
+    .form-control,
+    .form-select {
+
+        font-size: .95rem;
+    }
+}
+
+/* ===================================
+   ACTION BUTTONS
+=================================== */
+
+.action-buttons {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: .6rem;
+
+    flex-wrap: wrap;
+}
+
+.action-btn {
+
+    border: none;
+
+    width: 40px;
+
+    height: 40px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: all .22s ease;
+
+    text-decoration: none;
+
+    font-size: .95rem;
+
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+
+    cursor: pointer;
+}
+
+.action-btn:hover {
+
+    transform: translateY(-3px) scale(1.05);
+}
+
+.action-view {
+
+    background: linear-gradient(
+
+        180deg,
+
+        #dbeafe,
+
+        #bfdbfe
+
+    );
+
+    color: #1d4ed8;
+}
+
+.action-view:hover {
+
+    color: #1e40af;
+}
+
+.action-edit {
+
+    background: linear-gradient(
+
+        180deg,
+
+        #fef3c7,
+
+        #fde68a
+
+    );
+
+    color: #b45309;
+}
+
+.action-edit:hover {
+
+    color: #92400e;
+}
+
+.action-delete {
+
+    background: linear-gradient(
+
+        180deg,
+
+        #ffe4e6,
+
+        #fecdd3
+
+    );
+
+    color: #be123c;
+}
+
+.action-delete:hover {
+
+    color: #9f1239;
+}
+

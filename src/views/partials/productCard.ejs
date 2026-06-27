@@ -1,0 +1,14 @@
+<a href="/product/<%= product.id %>" class="text-decoration-none text-reset">
+  <div class="card product-card">
+    <% if (product.images && product.images.length > 0) { %>
+      <img src="data:image/jpeg;base64,<%= product.images[0].file %>"
+           class="card-img-top product-img" alt="<%= product.name %>">
+    <% } else { %>
+      <img src="/images/logo.png" class="card-img-top product-img" alt="<%= product.name %>">
+    <% } %>
+    <div class="card-body">
+      <div class="product-price">$<%= Number(product.price).toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+      <h6 class="card-title product-title"><%= product.name %></h6>
+    </div>
+  </div>
+</a>

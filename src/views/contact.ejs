@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Contacto - ShopMaster
+    </title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/tokens.css">
+    <link rel="stylesheet" href="/css/base.css">
+
+    <style>
+        body {
+
+            background:
+                linear-gradient(180deg,
+                    #fff 0%,
+                    #faf6fb 100%);
+
+        }
+
+        .contact-wrapper {
+
+            max-width: 900px;
+
+            margin: auto;
+
+        }
+
+        .contact-card {
+
+            border: none;
+
+            border-radius: 32px;
+
+            overflow: hidden;
+
+            background: white;
+
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.08);
+
+        }
+
+       .contact-left {
+            background:
+                linear-gradient(
+                    180deg,
+                    #fff8fb 0%,
+                    #f9e4ee 100%
+                );
+
+            padding: 60px 40px;
+
+            height: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            position: relative;
+
+        }
+
+        .contact-text {
+
+            color: #444;
+
+            font-size: 1.05rem;
+
+            line-height: 1.8;
+
+        }
+
+        .contact-right {
+
+            padding: 60px 40px;
+
+        }
+
+        .contact-title {
+
+            font-weight: 700;
+
+            margin-bottom: 10px;
+
+        }
+
+        .contact-subtitle {
+
+            color: #777;
+
+            margin-bottom: 40px;
+
+        }
+
+        .contact-btn {
+
+            height: 64px;
+
+            border-radius: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 14px;
+
+            font-weight: 600;
+
+            font-size: 1rem;
+
+            transition: all .25s ease;
+
+            text-decoration: none;
+
+        }
+
+        .contact-btn i {
+
+            font-size: 1.3rem;
+
+        }
+
+        .contact-btn:hover {
+
+            transform: translateY(-3px);
+
+        }
+
+        .contact-whatsapp {
+
+            background: #25D366;
+
+            color: white;
+
+        }
+
+        .contact-whatsapp:hover {
+
+            background: #1ebe5b;
+
+            color: white;
+
+        }
+
+        .contact-instagram {
+
+            background:
+                linear-gradient(135deg,
+                    #fd5949,
+                    #d6249f,
+                    #285AEB);
+
+            color: white;
+
+        }
+
+        .contact-instagram:hover {
+
+            opacity: .92;
+
+            color: white;
+
+        }
+
+        .contact-email {
+
+            border: 2px solid #111;
+
+            color: #111;
+
+            background: white;
+
+        }
+
+        .contact-email:hover {
+
+            background: #111;
+
+            color: white;
+
+        }
+
+        .contact-extra {
+
+            margin-top: 40px;
+
+            padding-top: 30px;
+
+            border-top: 1px solid #eee;
+
+        }
+
+        .contact-info {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 18px;
+
+            color: #555;
+
+        }
+
+        .contact-info i {
+
+            width: 36px;
+
+            height: 36px;
+
+            border-radius: 12px;
+
+            background: #f5f5f5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+        @media(max-width: 991px) {
+
+            .contact-left {
+
+                padding: 40px 30px;
+
+                text-align: center;
+
+            }
+
+            .contact-right {
+
+                padding: 40px 25px;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <%- include('partials/topbar') %>
+  <div class="container mt-4 pt-5">
+
+        <div class="container py-5">
+
+            <div class="contact-wrapper">
+
+                <div class="card contact-card">
+
+                    <div class="row g-0">
+
+                        <!-- LEFT -->
+
+                        <div class="col-lg-5">
+
+                            <div class="contact-left">
+
+                                <div class="text-center mb-4">
+                                    <img src="/images/logo.png" alt="ShopMaster" class="img-fluid" style="
+                                        max-width:200px;
+                                        border-radius:50%;
+                                        filter: drop-shadow(0 8px 24px rgba(0,0,0,0.15));
+                                    ">
+
+                                </div>
+                                <p class="contact-text text-center ">
+
+                                    Fundas, accesorios y productos exclusivos
+                                    para que tu celular tenga el mejor estilo.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- RIGHT -->
+
+                        <div class="col-lg-7">
+
+                            <div class="contact-right">
+
+                                <h1 class="contact-title">
+
+                                    Contactanos
+
+                                </h1>
+
+                                <p class="contact-subtitle">
+
+                                    Elegí el medio que prefieras y respondemos lo antes posible.
+
+                                </p>
+
+                                <!-- WHATSAPP -->
+
+                                <a href="https://wa.me/<%= appSettings.whatsapp %>" target="_blank"
+                                    class="contact-btn contact-whatsapp mb-3">
+
+                                    <i class="fab fa-whatsapp"></i>
+
+                                    Hablar por WhatsApp
+
+                                </a>
+
+                                <!-- INSTAGRAM -->
+
+                                <a href="<%= appSettings.instagram %>" target="_blank"
+                                    class="contact-btn contact-instagram mb-3">
+
+                                    <i class="fab fa-instagram"></i>
+
+                                    Ver Instagram
+
+                                </a>
+
+                                <!-- EMAIL -->
+
+                                <a href="mailto:<%= appSettings.email %>" class="contact-btn contact-email">
+
+                                    <i class="fas fa-envelope"></i>
+
+                                    <%= appSettings.email %>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+        <%- include('partials/footer') %>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+/* ======================================================
+    TOKENS / VARIABLES (Frontend)
+
+    Propósito:
+    - Centraliza las variables CSS (colores, tipografías, tamaños,
+       radios y sombras) que controlan la apariencia de TODO el
+       frontend (páginas públicas). Cambiar estas variables
+       actualizará rápidamente la paleta y tipografías del sitio.
+
+    Uso:
+    - Importar `tokens.css` antes de `base.css` y de los estilos
+       específicos de cada vista. Ejemplo en las plantillas:
+          <link rel="stylesheet" href="/css/tokens.css">
+          <link rel="stylesheet" href="/css/base.css">
+          <link rel="stylesheet" href="/css/home.css">
+
+    Notas importantes:
+    - NO editar aquí estilos específicos de backoffice. Los estilos
+       del administrador están en `public/css/admin/`.
+    - Mantén las variables con nombres descriptivos (`--primary-color`,
+       `--font-family`, etc.) para facilitar el mantenimiento.
+====================================================== */
+:root {
+   /* Paleta principal: tonos sobrios y acento dorado */
+   --primary-color: #1f2933; /* dark charcoal */
+   --primary-dark: #0f1720;
+   --light-bg: #faf9f7; /* warm off-white */
+   --white: #ffffff;
+   --text-dark: #111827; /* near-black */
+   --text-light: #4b5563; /* muted gray */
+   --border-color: #e6e2dc;
+   --hero-bg-start: rgba(31,41,51,0.95);
+   --hero-bg-end: rgba(15,23,32,0.9);
+
+   /* Tipografías */
+   --font-family: 'Montserrat', sans-serif;
+   --font-heading: 'Playfair Display', serif;
+  --font-size-base: 14px;
+  --font-size-xl: 20px;
+  --font-size-xxl: 28px;
+
+  /* Botones y estados */
+   --accent-gold: #b9925b;
+   --hero-button-bg: var(--accent-gold);
+   --hero-button-text: #ffffff;
+   --success-color: #2f855a;
+   --warning-color: #d69e2e;
+   --info-color: #60a5fa;
+
+  /* Bordes y sombras */
+   --border-radius: 10px;
+   --shadow-light: 0 6px 18px rgba(16,24,32,0.06);
+   --shadow-medium: 0 14px 40px rgba(16,24,32,0.12);
+
+  /* Logo */
+  --logo-size: 70px;
+  --logo-zoom: 1.4;
+}
+
+/* Nota: Cambia estas variables para aplicar una nueva paleta o fuentes
+   a TODO el frontend (no backoffice). */
