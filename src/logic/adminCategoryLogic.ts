@@ -1,16 +1,14 @@
-import Category from '../models/category';
-import CategoryImage from '../models/categoryImage';
-import Product from '../models/product';
+import { SuitCategory, SuitCategoryImage } from '../models';
 
 export default {
-    async getAllCategories(): Promise<Category[]> {
-      return Category.findAll({ where: { deleted: false } });
+    async getAllCategories(): Promise<any[]> {
+      return SuitCategory.findAll({ where: { deleted: false } });
     },
 
-    async getCategoryData(id: string): Promise<Category | null> {
-      const category = await Category.findByPk(id, {
+    async getCategoryData(id: string): Promise<any | null> {
+      const category = await SuitCategory.findByPk(id, {
         include: [
-          { model: CategoryImage, as: 'images', limit: 1 },
+          { model: SuitCategoryImage, as: 'images', limit: 1 },
         ],
       });
       return category || null;
@@ -19,15 +17,18 @@ export default {
     async createCategoryData(
       name: string,
       description: string,
-      showToClients: string
-    ): Promise<{ category: Category; files: any[] }> {
+      showToClients: string,
+      signPrice: string
+    ): Promise<{ category: SuitCategory; files: any[] }> {
       const categoryData = {
         name,
         description,
         showToClients: showToClients === 'true',
+        signPrice: parseFloat(signPrice),
+        deleted: false,
       };
 
-      const category = await Category.create(categoryData);
+      const category = await SuitCategory.create(categoryData);
       return { category, files: [] };
     },
 
@@ -35,9 +36,10 @@ export default {
       id: string,
       name: string,
       description: string,
-      showToClients: string
-    ): Promise<Category | null> {
-      const category = await Category.findByPk(id);
+      showToClients: string,
+      signPrice: string
+    ): Promise<SuitCategory | null> {
+      const category = await SuitCategory.findByPk(id);
       if (!category) {
         return null;
       }
@@ -46,13 +48,15 @@ export default {
         name,
         description,
         showToClients: showToClients === 'true',
+        signPrice: parseFloat(signPrice),
+        deleted: false,
       });
 
       return category;
     },
 
     async deleteCategoryData(id: string): Promise<boolean> {
-      const category = await Category.findByPk(id);
+      const category = await SuitCategory.findByPk(id);
 
       if (!category) {
         return false;
@@ -63,16 +67,10 @@ export default {
         throw new Error('No se puede eliminar la categoría por defecto.');
       }
 
-      // Reasignar productos asociados a la categoría por defecto (id = 1)
-      await Product.update(
-        { categoryId: 1 },
-        { where: { categoryId: category.id } }
-      );
-
       // Eliminar imágenes asociadas a la categoría
-      await CategoryImage.destroy({ where: { categoryId: category.id } });
+      await SuitCategoryImage.destroy({ where: { suitCategoryId: category.id } });
 
-      await category.update({ deleted: true }, { where: { id: category.id } });
+      await category.update({ deleted: true });
 
       return true;
     },
@@ -80,12 +78,12 @@ export default {
     async deleteCategoryImageData(id: string): Promise<boolean> {
       const categoryId = parseInt(id);
 
-      const category = await Category.findByPk(categoryId);
+      const category = await SuitCategory.findByPk(categoryId);
       if (!category) {
         return false;
       }
 
-      await CategoryImage.destroy({ where: { categoryId } });
+      await SuitCategoryImage.destroy({ where: { suitCategoryId: categoryId } });
 
       return true;
     },

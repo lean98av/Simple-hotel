@@ -1,15 +1,15 @@
-import { Router, Response, NextFunction } from 'express';
-import Product, { ProductAttributes } from '../models/product';
+import { Router, Response } from 'express';
+import { SuitCategory, SuitCategoryImage } from '../models';
 import { Op } from 'sequelize';
 
 const router = Router();
 
 router.get('/', async (req: { query: { q?: string } }, res: Response) => {
   try {
-    const { q = '' } = (req as any).query;
+    const { q = '' } = req.query;
     const search = q.toLowerCase();
 
-    const products = await Product.findAll({
+    const suitCategories = await SuitCategory.findAll({
       where: {
         showToClients: true,
         deleted: false,
@@ -20,10 +20,12 @@ router.get('/', async (req: { query: { q?: string } }, res: Response) => {
           ],
         }),
       },
-      include: [{ model: Product, as: 'category' }],
+      include: [
+        { model: SuitCategoryImage, as: 'images', limit: 1 },
+      ],
     });
 
-    res.json({ success: true, data: products });
+    res.json({ success: true, data: suitCategories });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error en la búsqueda' });
   }

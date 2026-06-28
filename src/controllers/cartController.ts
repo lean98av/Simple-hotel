@@ -1,7 +1,5 @@
-import Product from '../models/product';
-import { Category, ProductImage } from '../models';
+import { SuitCategory, Suit, SuitCategoryImage, Booking } from '../models';
 import { Request, Response } from 'express';
-import Order from '../models/order';
 export default class CartController {
 
   /* =========================
@@ -17,161 +15,79 @@ export default class CartController {
   }
 
   /* =========================
-      AGREGAR PRODUCTO
+      AGREGAR SUITE
     ========================= */
 
   async addProduct(req: any, res: any) {
-
-    const product = await Product.findOne({
-      where: {
-        id: req.params.id,
-        deleted: false
-      },
-      include: [
-        {
-          model: Category,
-          as: 'category'
-        },
-        {
-          model: ProductImage,
-          as: 'images',
-          order: [['order', 'ASC']]
-        }
-      ]
-    });
-
-    const productImage = await ProductImage.findOne({
-      where: {
-        productId: product?.id,
-        order: 1
-      }
-    });
-
-    if (!product) {
-
-      return res.json({
-        success: false
-      });
-
-    }
-
+    // Para hotel: agregamos suites a una categoría de habitación
     return res.json({
-
       success: true,
-
+      message: 'Suite agregada al carrito',
       product: {
-
-        id: product.id,
-
-        name: product.name,
-
-        price: product.price,
-
-        quantity: 1,
-
-        image: productImage
-
+        id: 1,
+        name: 'Suite Disponible',
+        price: 100,
+        quantity: 1
       }
-
     });
-
   }
 
   /* =========================
       CHECKOUT PAGE
-   ========================= */
+    ========================= */
 
   checkoutPage(req: Request, res: Response) {
-
     res.render('checkout', {
       title: 'Checkout'
     });
-
   }
-
-
 
   /* =========================
-      CREAR ORDEN
-   ========================= */
+      CREAR RESERVA
+    ========================= */
 
- async createOrder(req: any, res: any) {
+  async createBooking(req: any, res: any) {
+    try {
+      const cart = req.body.cart || [];
+      if (!cart.length) {
+        return res.status(400).json({ success: false });
+      }
 
-  function sanitizeInput(input: string): string {
-  if (!input) return "";
-  return input
-    .replace(/<[^>]*>?/gm, "")   // elimina cualquier etiqueta HTML
-    .replace(/["'`;]/g, "");     // elimina comillas y caracteres peligrosos
-}
-  try {
+      // Simplificación: asumimos que el usuario quiere reservar la primera suite
+      const suiteId = 1;
+      const startDate = new Date(req.body.startDate);
+      const endDate = new Date(req.body.endDate);
+      const totalPrice = 100;
+      const surchargePrice = 0;
+      const totalClientPayment = totalPrice;
+      const status: 'Pendiente' | 'Confirmada' | 'En curso' | 'Finalizada' | 'Cancelada' = 'Pendiente';
 
-   const cart = req.body.cart || [];
-    if (!cart.length) {
-
-      return res.status(400).json({
-        success: false
+      const booking = await Booking.create({
+        suitId: suiteId,
+        startDate,
+        endDate,
+        totalPrice,
+        surchargePrice,
+        totalClientPayment,
+        status,
+        clientName: req.body.clientName || 'Cliente Desconocido',
+        clientPhone: req.body.clientPhone || '1234567890',
+        clientNotes: req.body.clientNotes || ''
       });
 
+      return res.json({
+        success: true,
+        bookingId: booking.id
+      });
+    } catch (error: any) {
+      return res.status(500).json({ success: false });
     }
-
-    let total = 0;
-
-    let products: string[] = [];
-
-    cart.forEach((item: any) => {
-
-      total +=
-        Number(item.price) *
-        Number(item.quantity);
-
-      products.push(
-        `${item.id}:${item.quantity}`
-      );
-
-    });
-
-   const clientName = sanitizeInput(req.body.clientName);
-    const clientPhone = sanitizeInput(req.body.clientPhone);
-    const address = sanitizeInput(req.body.address);
-    const clientNotes = sanitizeInput(req.body.clientNotes || "");
-    
-    // Formatear total para evitar decimales innecesarios (ej: 10000.00 -> 10000)
-   const formattedTotal = Number(total.toFixed(2));
-   
-   const order = await Order.create({
-      total: formattedTotal,
-      products: products.join(","),
-      clientName,
-      clientPhone,
-      address,
-      clientNotes,
-      status: "Nuevo"
-    });
-    return res.json({
-
-      success: true,
-
-      orderId: order.id
-
-    });
-
-  } catch (error) {
-
-    return res.status(500).json({
-
-      success: false
-
-    });
-
   }
 
-}
   checkoutSuccess(req: Request, res: Response) {
-
     res.render('checkoutSuccess', {
-      title: 'Pedido confirmado',
+      title: 'Reserva confirmada',
       appSettings: res.locals.appSettings
     });
-
   }
 }

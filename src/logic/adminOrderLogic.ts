@@ -1,8 +1,7 @@
-import Order from '../models/order';
-import Product from '../models/product';
+import { Booking, Suit } from '../models';
 
 export default {
-    async getOrdersWithPagination(
+    async getBookingsWithPagination(
       page: number,
       limit: number,
       statusFilter?: string
@@ -14,56 +13,54 @@ export default {
         whereClause.status = statusFilter;
       }
 
-      const totalOrders = await Order.count({ where: whereClause });
-      const totalPages = Math.ceil(totalOrders / limit);
+      const totalBookings = await Booking.count({ where: whereClause });
+      const totalPages = Math.ceil(totalBookings / limit);
 
-      const orders = await Order.findAll({
+      const bookings = await Booking.findAll({
         where: whereClause,
         order: [['createdAt', 'DESC']],
         limit,
         offset,
+        include: [
+          {
+            model: Suit,
+            as: 'suit',
+            attributes: ['id', 'number', 'status'],
+          },
+        ],
       });
 
-      const allProducts = await Product.findAll();
-      const productsMap = new Map(allProducts.map((p) => [p.id, p]));
+      const allSuits = await Suit.findAll();
+      const suitsMap = new Map(allSuits.map((s) => [s.id, s]));
 
-      const enrichedOrders = orders.map((order) => {
-        const productIds = order.products.split(',');
-        const orderProducts = productIds
-          .map((id) => {
-            const product = productsMap.get(parseInt(id));
-            return product
-              ? {
-                  productId: product.id,
-                  productName: product.name,
-                  productPrice: product.price,
-                }
-              : null;
-          })
-          .filter((p) => p !== null);
-
+      const enrichedBookings = bookings.map((booking) => {
+        const suit = suitsMap.get(booking.suitId);
         return {
-          id: order.id,
-          total: order.total,
-          products: orderProducts,
-          address: order.address,
-          clientName: order.clientName,
-          clientNotes: order.clientNotes,
-          clientPhone: order.clientPhone,
-          status: order.status,
-          createdAt: order.createdAt,
+          id: booking.id,
+          suitId: booking.suitId,
+          suitNumber: suit?.number || 'Sin asignar',
+          suitStatus: suit?.status || 'Desconocida',
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          totalPrice: booking.totalPrice,
+          surchargePrice: booking.surchargePrice || 0,
+          totalClientPayment: booking.totalClientPayment,
+          status: booking.status,
+          clientName: booking.clientName,
+          clientPhone: booking.clientPhone,
+          clientNotes: booking.clientNotes,
+          createdAt: booking.createdAt,
         };
       });
 
       return {
-        orders: enrichedOrders,
-        statusFilter,
+        bookings: enrichedBookings,
         currentPage: page,
         totalPages: totalPages,
       };
     },
 
-    async getOrdersWithoutPagination(
+    async getBookingsWithoutPagination(
       page: number,
       limit: number,
       statusFilter?: string
@@ -73,56 +70,54 @@ export default {
         whereClause.status = statusFilter;
       }
 
-      const totalOrders = await Order.count({ where: whereClause });
-      const totalPages = Math.ceil(totalOrders / limit);
+      const totalBookings = await Booking.count({ where: whereClause });
+      const totalPages = Math.ceil(totalBookings / limit);
+      const offset = (page - 1) * limit;
 
-      const orders = await Order.findAll({
+      const bookings = await Booking.findAll({
         where: whereClause,
         limit,
-        offset: (page - 1) * limit,
+        offset,
         order: [['createdAt', 'DESC']],
+        include: [
+          {
+            model: Suit,
+            as: 'suit',
+            attributes: ['id', 'number', 'status'],
+          },
+        ],
       });
 
-      const allProducts = await Product.findAll();
-      const productsMap = new Map(allProducts.map((p) => [p.id, p]));
+      const allSuits = await Suit.findAll();
+      const suitsMap = new Map(allSuits.map((s) => [s.id, s]));
 
-      const enrichedOrders = orders.map((order) => {
-        const productIds = order.products.split(',');
-        const orderProducts = productIds
-          .map((id) => {
-            const product = productsMap.get(parseInt(id));
-            return product
-              ? {
-                  productId: product.id,
-                  productName: product.name,
-                  productPrice: product.price,
-                }
-              : null;
-          })
-          .filter((p) => p !== null);
-
+      const enrichedBookings = bookings.map((booking) => {
+        const suit = suitsMap.get(booking.suitId);
         return {
-          id: order.id,
-          total: order.total,
-          products: orderProducts,
-          address: order.address,
-          clientName: order.clientName,
-          clientNotes: order.clientNotes,
-          clientPhone: order.clientPhone,
-          status: order.status,
-          createdAt: order.createdAt,
+          id: booking.id,
+          suitId: booking.suitId,
+          suitNumber: suit?.number || 'Sin asignar',
+          suitStatus: suit?.status || 'Desconocida',
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          totalPrice: booking.totalPrice,
+          surchargePrice: booking.surchargePrice || 0,
+          totalClientPayment: booking.totalClientPayment,
+          status: booking.status,
+          clientName: booking.clientName,
+          clientPhone: booking.clientPhone,
+          clientNotes: booking.clientNotes,
+          createdAt: booking.createdAt,
         };
       });
 
       return {
-        orders: enrichedOrders,
-        statusFilter,
-        currentPage: page,
-        totalPages: totalPages,
+        bookings: enrichedBookings,
+        totalPages,
       };
     },
 
-    async loadMoreOrders(
+    async loadMoreBookings(
       page: number,
       limit: number,
       statusFilter?: string
@@ -132,61 +127,61 @@ export default {
         whereClause.status = statusFilter;
       }
 
-      const totalOrders = await Order.count({ where: whereClause });
-      const totalPages = Math.ceil(totalOrders / limit);
+      const totalBookings = await Booking.count({ where: whereClause });
+      const totalPages = Math.ceil(totalBookings / limit);
+      const offset = (page - 1) * limit;
 
-      const orders = await Order.findAll({
+      const bookings = await Booking.findAll({
         where: whereClause,
         limit,
-        offset: (page - 1) * limit,
+        offset,
         order: [['createdAt', 'DESC']],
+        include: [
+          {
+            model: Suit,
+            as: 'suit',
+            attributes: ['id', 'number', 'status'],
+          },
+        ],
       });
 
-      const allProducts = await Product.findAll();
-      const productsMap = new Map(allProducts.map((p) => [p.id, p]));
+      const allSuits = await Suit.findAll();
+      const suitsMap = new Map(allSuits.map((s) => [s.id, s]));
 
-      const enrichedOrders = orders.map((order) => {
-        const productIds = order.products.split(',');
-        const orderProducts = productIds
-          .map((id) => {
-            const product = productsMap.get(parseInt(id));
-            return product
-              ? {
-                  productId: product.id,
-                  productName: product.name,
-                  productPrice: product.price,
-                }
-              : null;
-          })
-          .filter((p) => p !== null);
-
+      const enrichedBookings = bookings.map((booking) => {
+        const suit = suitsMap.get(booking.suitId);
         return {
-          id: order.id,
-          total: order.total,
-          products: orderProducts,
-          address: order.address,
-          clientName: order.clientName,
-          clientNotes: order.clientNotes,
-          clientPhone: order.clientPhone,
-          status: order.status,
-          createdAt: order.createdAt,
+          id: booking.id,
+          suitId: booking.suitId,
+          suitNumber: suit?.number || 'Sin asignar',
+          suitStatus: suit?.status || 'Desconocida',
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          totalPrice: booking.totalPrice,
+          surchargePrice: booking.surchargePrice || 0,
+          totalClientPayment: booking.totalClientPayment,
+          status: booking.status,
+          clientName: booking.clientName,
+          clientPhone: booking.clientPhone,
+          clientNotes: booking.clientNotes,
+          createdAt: booking.createdAt,
         };
       });
 
       return {
-        orders: enrichedOrders,
+        bookings: enrichedBookings,
         currentPage: page,
         totalPages: totalPages,
       };
     },
 
-    async updateOrderData(id: string, status: 'Nuevo' | 'Procesando' | 'Pagado' | 'Enviado' | 'Cancelado'): Promise<boolean> {
-      const order = await Order.findByPk(parseInt(id));
-      if (!order) {
+    async updateBookingStatus(id: string, status: string): Promise<boolean> {
+      const booking = await Booking.findByPk(parseInt(id));
+      if (!booking) {
         return false;
       }
 
-      await order.update({ status });
+      await booking.update({ status: status as any });
 
       return true;
     },

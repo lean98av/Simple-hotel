@@ -54,13 +54,14 @@ export default {
 
   async createCategory(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, description, showToClients } = req.body;
+      const { name, description, showToClients, signPrice } = req.body;
       const files = Array.isArray(req.files) ? req.files : (req.files as any).images || [];
 
       const categoryAndFiles = await adminCategoryLogic.createCategoryData(
         name,
         description,
-        showToClients === 'true' ? 'true' : 'false'
+        showToClients === 'true' ? 'true' : 'false',
+        signPrice || '0'
       );
 
       const category = categoryAndFiles.category;
@@ -87,7 +88,7 @@ export default {
   async editCategory(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const { name, description, showToClients } = req.body;
+      const { name, description, showToClients, signPrice } = req.body;
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       const allFiles = Object.values(files).flat();
 
@@ -95,7 +96,8 @@ export default {
         id,
         name,
         description,
-        showToClients === 'true' ? 'true' : 'false'
+        showToClients === 'true' ? 'true' : 'false',
+        signPrice || '0'
       );
 
       if (!updatedCategory) {

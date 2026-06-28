@@ -1,6 +1,4 @@
-import { Category } from '../models';
-import Product from '../models/product';
-import ProductImage from '../models/productImage';
+import { SuitCategory, Suit, SuitCategoryImage } from '../models';
 import sharp from 'sharp';
 
 export default {
@@ -10,17 +8,14 @@ export default {
     ): Promise<Buffer> {
       try {
         const metadata = await sharp(buffer).metadata();
-
-        // Para móviles: limitar ancho a 720px
         const targetWidth = Math.min(metadata.width ?? 720, 720);
 
         let quality = 80;
         let output = await sharp(buffer)
           .resize({ width: targetWidth, withoutEnlargement: true })
-          .webp({ quality }) // WebP suele ser más eficiente que JPEG
+          .webp({ quality })
           .toBuffer();
 
-        // Reducir calidad en pasos de 5 hasta que entre en el límite
         while (output.length > maxSizeBytes && quality > 30) {
           quality -= 5;
           output = await sharp(buffer)
@@ -29,49 +24,35 @@ export default {
             .toBuffer();
         }
 
-
         return output;
       } catch (error: any) {
         throw new Error(`Error al comprimir imagen: ${error.message}`);
       }
     },
 
-    async getProducts(): Promise<any[]> {
-      return Product.findAll({
+    async getSuitCategories(): Promise<any[]> {
+      return SuitCategory.findAll({
         where: { deleted: false },
         include: [
-          { model: Category, as: 'category' },
-          {
-            model: ProductImage,
-            as: 'images',
-            limit: 1,
-            order: [['order', 'ASC']]
-          },
+          { model: SuitCategoryImage, as: 'images', limit: 1 },
         ],
       });
     },
 
-    async getProductsWithFilters(categoryId: string = 'all', where: any = {}): Promise<any[]> {
-      const includeImages = process.env.INCLUDE_IMAGES_ADMIN_PRODUCTS === 'true';
+    async getSuitCategoriesWithFilters(where: any = {}): Promise<any[]> {
+      const includeImages = process.env.INCLUDE_IMAGES_ADMIN_SUIT_CATEGORIES === 'true';
 
-      // Base where clause
       const baseWhere: any = {
         deleted: false,
         ...where,
       };
 
-      // Add category filter if specified
-      if (categoryId !== 'all') {
-        baseWhere.categoryId = parseInt(categoryId);
-      }
-
-      return Product.findAll({
+      return SuitCategory.findAll({
         where: baseWhere,
         include: [
-          { model: Category, as: 'category' },
           ...(includeImages ? [
             {
-              model: ProductImage,
+              model: SuitCategoryImage,
               as: 'images',
               limit: 1
             },
@@ -80,96 +61,177 @@ export default {
       });
     },
 
-    async getProductById(id: string): Promise<any | null> {
-      const product = await Product.findByPk(id, {
+    async getSuitCategoryById(id: string): Promise<any | null> {
+      const suitCategory = await SuitCategory.findByPk(id, {
         include: [
-          { model: Category, as: 'category' },
-          { model: ProductImage, as: 'images', order: [['order', 'ASC']] },
+          { model: SuitCategoryImage, as: 'images', order: [['order', 'ASC']] },
         ],
       });
 
-      return product || null;
+      return suitCategory || null;
     },
 
+    async createSuitCategoryData(
+      name: string,
+      description: string,
+      showToClients: string,
+      signPrice: string
+    ): Promise<{ suitCategory: SuitCategory; files: any[] }> {
+      const suitCategoryData = {
+        name,
+        description,
+        showToClients: showToClients === 'true',
+        signPrice: parseFloat(signPrice),
+        deleted: false,
+      };
+
+      const suitCategory = await SuitCategory.create(suitCategoryData);
+      return { suitCategory, files: [] };
+    },
+
+    async editSuitCategoryData(
+      id: string,
+      name: string,
+      description: string,
+      showToClients: string,
+      signPrice: string
+    ): Promise<SuitCategory | null> {
+      const suitCategory = await SuitCategory.findByPk(id);
+      if (!suitCategory) {
+        return null;
+      }
+
+      await suitCategory.update({
+        name,
+        description,
+        showToClients: showToClients === 'true',
+        signPrice: parseFloat(signPrice),
+        deleted: false,
+      });
+
+      return suitCategory;
+    },
+
+    async getSuitCategoryData(id: string): Promise<any | null> {
+      const suitCategory = await SuitCategory.findByPk(id, {
+        include: [
+          { model: SuitCategoryImage, as: 'images', limit: 1, order: [['order', 'ASC']] },
+        ],
+      });
+
+      return suitCategory || null;
+    },
+
+    async deleteSuitCategoryData(id: string): Promise<boolean> {
+      const suitCategory = await SuitCategory.findByPk(id);
+
+      if (!suitCategory) {
+        return false;
+      }
+
+      await SuitCategoryImage.destroy({
+        where: { suitCategoryId: id },
+      });
+
+      await suitCategory.update({
+        deleted: true,
+      });
+
+      return true;
+    },
+
+    async deleteSuitCategoryImageData(id: string): Promise<boolean> {
+      const suitCategoryId = parseInt(id);
+
+      const suitCategory = await SuitCategory.findByPk(suitCategoryId);
+      if (!suitCategory) {
+        return false;
+      }
+
+      await SuitCategoryImage.destroy({ where: { suitCategoryId } });
+
+      return true;
+    },
+
+    // Nuevas funciones para productos
     async createProductData(
       name: string,
-      price: string,
-      categoryId: string,
+      signPrice: number,
       description: string,
       showToClients: string,
       outStock: string,
       topProduct: string
-    ): Promise<{ product: Product; files: any[] }> {
+    ): Promise<{ product: SuitCategory; files: any[] }> {
       const productData = {
         name,
-        price: parseFloat(price),
-        categoryId: parseInt(categoryId),
+        signPrice, // Usamos signPrice en lugar de price
         description,
         showToClients: showToClients === 'true',
-        outStock: outStock === 'true',
-        topProduct: topProduct === 'true',
         deleted: false,
       };
 
-      const product = await Product.create(productData);
+      const product = await SuitCategory.create(productData);
       return { product, files: [] };
     },
 
     async editProductData(
       id: string,
       name: string,
-      price: string,
-      categoryId: string,
+      signPrice: number,
       description: string,
       showToClients: string,
       outStock: string,
       topProduct: string
-    ): Promise<any | null> {
-      const product = await Product.findByPk(id);
+    ): Promise<SuitCategory | null> {
+      const product = await SuitCategory.findByPk(id);
       if (!product) {
         return null;
       }
 
       await product.update({
         name,
-        price: parseFloat(price),
-        categoryId: parseInt(categoryId),
+        signPrice,
         description,
         showToClients: showToClients === 'true',
-        outStock: outStock === 'true',
-        topProduct: topProduct === 'true',
+        deleted: false,
       });
 
       return product;
     },
 
     async getProductData(id: string): Promise<any | null> {
-      const product = await Product.findByPk(id, {
+      const product = await SuitCategory.findByPk(id, {
         include: [
-          { model: Category, as: 'category' },
-          { model: ProductImage, as: 'images', limit: 1, order: [['order', 'ASC']] },
+          { model: SuitCategoryImage, as: 'images', limit: 1 },
         ],
       });
-
       return product || null;
     },
 
+    async getProductById(id: string): Promise<SuitCategory | null> {
+      return await SuitCategory.findByPk(id);
+    },
+
+    async getProductsWithFilters(
+      categoryFilter: string,
+      where: any
+    ): Promise<any[]> {
+      return SuitCategory.findAll({
+        where: {
+          ...where,
+          ...(categoryFilter && categoryFilter !== 'all' ? { categoryId: parseInt(categoryFilter) } : {}),
+        },
+      });
+    },
+
     async deleteProductData(id: string): Promise<boolean> {
-      const product = await Product.findByPk(id);
+      const product = await SuitCategory.findByPk(id);
 
       if (!product) {
         return false;
       }
 
-      // Delete associated images
-      await ProductImage.destroy({
-        where: { productId: id },
-      });
-
-      // Soft delete - mark as deleted instead of destroying
-      await product.update({
-        deleted: true,
-      });
+      await product.update({ deleted: true });
 
       return true;
     },
@@ -178,16 +240,15 @@ export default {
       const productId = parseInt(id);
       const orderNum = parseInt(order);
 
-      if (orderNum < 1 || orderNum > 4) {
-        return false;
-      }
-
-      const product = await Product.findByPk(id);
+      const product = await SuitCategory.findByPk(productId);
       if (!product) {
         return false;
       }
 
-      await ProductImage.destroy({ where: { productId, order: orderNum } });
+      // Eliminar imagen con ese orden
+      await SuitCategoryImage.destroy({
+        where: { suitCategoryId: productId, order: orderNum },
+      });
 
       return true;
     },

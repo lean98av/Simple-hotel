@@ -14,12 +14,12 @@ export interface SuitCategoryAttributes {
   updatedAt: Date;
 }
 
-export interface SuitCategoryCreationAttrs extends Optional<SuitCategoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+export interface SuitCategoryCreationAttrs {
   name: string;
   description?: string;
   signPrice: number;
   showToClients: boolean;
-  deleted?: boolean;
+  deleted: boolean;
 }
 
 class SuitCategory extends Model<SuitCategoryAttributes, SuitCategoryCreationAttrs> {

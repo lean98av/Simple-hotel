@@ -20,13 +20,13 @@ export interface BookingAttributes {
   updatedAt: Date;
 }
 
-export interface BookingCreationAttrs extends Optional<BookingAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+export interface BookingCreationAttrs {
   suitId: number;
   startDate: Date;
   endDate: Date;
   totalPrice: number;
   surchargePrice?: number;
-  totalClientPayment?: number;
+  totalClientPayment: number;
   status: BookingStatus;
   clientName: string;
   clientPhone: string;
@@ -146,7 +146,7 @@ Booking.init(
 
 Booking.belongsTo(Suit, {
   foreignKey: 'suitId',
-  as: 'suit',
+  as: 'booking',
 });
 
 export default Booking;

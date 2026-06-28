@@ -15,10 +15,10 @@ export interface SuitAttributes {
   updatedAt: Date;
 }
 
-export interface SuitCreationAttrs extends Optional<SuitAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+export interface SuitCreationAttrs {
   number: string;
   status: SuitStatus;
-  deleted?: boolean;
+  deleted: boolean;
 }
 
 class Suit extends Model<SuitAttributes, SuitCreationAttrs> {
