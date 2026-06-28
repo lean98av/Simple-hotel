@@ -207,6 +207,14 @@ module.exports = {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
       },
+      categoryId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Categories',
+          key: 'id',
+        },
+      },
       showToClients: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

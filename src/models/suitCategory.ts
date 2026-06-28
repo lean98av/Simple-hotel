@@ -5,6 +5,7 @@ import SuitCategoryImage from './suitCategoryImage';
 
 export interface SuitCategoryAttributes {
   id: number;
+  categoryId:number;
   name: string;
   description?: string;
   signPrice: number;
@@ -57,6 +58,14 @@ SuitCategory.init(
         min: 0,
       },
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'categories',
+        key: 'id',
+      },
+    },
     showToClients: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -88,6 +97,9 @@ SuitCategory.init(
       },
       {
         fields: ['signPrice'],
+      },
+      {
+        fields: ['categoryId'],
       },
     ],
   }

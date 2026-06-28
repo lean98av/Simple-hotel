@@ -14,7 +14,7 @@ async function seedAll() {
   });
 
   try {
-    // 1. Seedar de categorías
+    // 1. Seeder de Categorías
     console.log('\n=== INSERTANDO CATEGORIAS ===');
     const categoriesFile = path.join(__dirname, '../seeders/1seedDeCategoriasScriptDB.sql');
     const categoriesContent = fs.readFileSync(categoriesFile, 'utf8');
@@ -26,19 +26,31 @@ async function seedAll() {
       }
     }
 
-    // 2. Seedar de productos
-    console.log('\n=== INSERTANDO PRODUCTOS ===');
-    const productsFile = path.join(__dirname, '../seeders/2seedDeProductosScriptDB.sql');
-    const productsContent = fs.readFileSync(productsFile, 'utf8');
-    const productsStatements = productsContent.split(';');
-    for (const stmt of productsStatements) {
+    // 2. Seeder de SuitCategories (Categorías de Habitaciones)
+    console.log('\n=== INSERTANDO SUIT CATEGORIES ===');
+    const suitCategoriesFile = path.join(__dirname, '../seeders/2seedDeSuitCategoriesScriptDB.sql');
+    const suitCategoriesContent = fs.readFileSync(suitCategoriesFile, 'utf8');
+    const suitCategoriesStatements = suitCategoriesContent.split(';');
+    for (const stmt of suitCategoriesStatements) {
       const trimmed = stmt.trim();
       if (trimmed && trimmed.startsWith('INSERT')) {
         await connection.query(trimmed);
       }
     }
 
-    // 3. Insertar usuario admin
+    // 3. Seeder de Suits (Habitaciones)
+    console.log('\n=== INSERTANDO SUITS (HABITACIONES) ===');
+    const suitsFile = path.join(__dirname, '../seeders/3seedDeSuitsScriptDB.sql');
+    const suitsContent = fs.readFileSync(suitsFile, 'utf8');
+    const suitsStatements = suitsContent.split(';');
+    for (const stmt of suitsStatements) {
+      const trimmed = stmt.trim();
+      if (trimmed && trimmed.startsWith('INSERT')) {
+        await connection.query(trimmed);
+      }
+    }
+
+    // 4. Insertar usuario admin
     console.log('\n=== INSERTANDO USUARIO ADMIN ===');
     const adminUserFile = path.join(__dirname, '../seeders/3insertAdminUser.sql');
     const adminUserContent = fs.readFileSync(adminUserFile, 'utf8');
