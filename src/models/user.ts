@@ -10,7 +10,7 @@ export interface UserAttributes {
 }
 
 export interface UserCreationAttrs extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {
-  usernName: string;
+  userName: string;
   password: string;
 }
 

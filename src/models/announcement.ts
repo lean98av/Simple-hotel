@@ -76,6 +76,7 @@ Announcement.init(
   }
 );
 
+// Definir relaciones después de exportar el modelo
 Announcement.hasMany(AnnouncementImage, {
   foreignKey: 'announcementId',
   as: 'images',

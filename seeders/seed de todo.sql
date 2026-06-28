@@ -1,3 +1,35 @@
+-- Insertar usuario: escotech / escotech123!
+INSERT INTO users (username, password, createdAt, updatedAt)
+VALUES ('escotech', 'escotech123!', NOW(), NOW())
+ON DUPLICATE KEY UPDATE password = 'escotech123!';
+
+
+-- Seeder de Categorías
+-- Solo 2 categorías: "Habitaciones comunes" y "Habitaciones premium"
+INSERT INTO categories (id, name, description, createdAt, updatedAt)
+VALUES
+(DEFAULT, 'Habitaciones comunes', 'Opciones básicas y económicas para estadías cortas y económicas.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(DEFAULT, 'Habitaciones premium', 'Habitaciones de lujo con servicios exclusivos y confort superior.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Seeder de SuitCategories (Categorías de Habitaciones)
+-- 6 tipos: simple, doble, triple para Habitaciones comunes y premium
+
+-- Habitaciones comunes
+INSERT INTO `suitcategories` (id, name, description, signPrice, categoryId, showToClients, deleted, createdAt, updatedAt)
+VALUES
+(DEFAULT, 'Estándar', 'Habitación simple con cama individual y servicios básicos.', 15.00, 1, true, false, NOW(), NOW()),
+(DEFAULT, 'Doble Estándar', 'Habitación doble con 2 camas individuales y servicios básicos.', 20.00, 1, true, false, NOW(), NOW()),
+(DEFAULT, 'Triple Estándar', 'Habitación triple con 3 camas individuales y servicios básicos.', 25.00, 1, true, false, NOW(), NOW());
+
+-- Habitaciones premium
+INSERT INTO `suitcategories` (id, name, description, signPrice, categoryId, showToClients, deleted, createdAt, updatedAt)
+VALUES
+(DEFAULT, 'Deluxe', 'Habitación premium con cama king size y vista al mar.', 50.00, 2, true, false, NOW(), NOW()),
+(DEFAULT, 'Suite Executive', 'Suite ejecutiva con 2 habitaciones y sala de estar.', 80.00, 2, true, false, NOW(), NOW()),
+(DEFAULT, 'Presidential', 'Suite presidencial con spa, jacuzzi y servicio de mayordomo.', 150.00, 2, true, false, NOW(), NOW());
+
+
+
 -- Seeder de Suits (Habitaciones)
 -- 10 habitaciones para cada tipo de suitCategory
 

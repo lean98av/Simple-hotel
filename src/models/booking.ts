@@ -144,9 +144,10 @@ Booking.init(
   }
 );
 
-Booking.belongsTo(Suit, {
-  foreignKey: 'suitId',
-  as: 'booking',
-});
+// Definir relación después de exportar el modelo
+// Booking.belongsTo(Suit, {
+//   foreignKey: 'suitId',
+//   as: 'bookings',
+// });
 
 export default Booking;

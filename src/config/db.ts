@@ -11,7 +11,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
     dialect: 'mysql',
-    logging: true,
+    logging: false,
     pool: {
       max: 5,
       min: 0,

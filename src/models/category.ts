@@ -71,6 +71,7 @@ Category.init(
   }
 );
 
+// Definir relaciones después de exportar el modelo
 Category.hasMany(CategoryImage, {
   foreignKey: 'categoryId',
   as: 'images',

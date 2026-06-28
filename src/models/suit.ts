@@ -94,6 +94,7 @@ Suit.init(
   }
 );
 
+// Definir relaciones después de exportar el modelo
 Suit.belongsTo(SuitCategory, {
   foreignKey: 'suitCategoryId',
   as: 'category',
