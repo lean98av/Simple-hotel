@@ -1,10 +1,10 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/db';
-import type Product from './product';
+import type SuitCategory from './suitCategory';
 
-export interface ProductImageAttributes {
+export interface SuitCategoryImageAttributes {
   id: number;
-  productId?: number;
+  suitCategoryId?: number;
   name: string;
   file: string;
   order: number;
@@ -12,13 +12,13 @@ export interface ProductImageAttributes {
   updatedAt: Date;
 }
 
-export interface ProductImageCreationAttrs extends Optional<ProductImageAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+export interface SuitCategoryImageCreationAttrs extends Optional<SuitCategoryImageAttributes, 'id' | 'createdAt' | 'updatedAt'> {
   order: number;
 }
 
-class ProductImage extends Model<ProductImageAttributes, ProductImageCreationAttrs> {
+class SuitCategoryImage extends Model<SuitCategoryImageAttributes, SuitCategoryImageCreationAttrs> {
   public id!: number;
-  public productId!: number;
+  public suitCategoryId!: number;
   public name!: string;
   public file!: string;
   public order!: number;
@@ -26,7 +26,7 @@ class ProductImage extends Model<ProductImageAttributes, ProductImageCreationAtt
   public updatedAt!: Date;
 }
 
-ProductImage.init(
+SuitCategoryImage.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -34,11 +34,11 @@ ProductImage.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    productId: {
+    suitCategoryId: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'products',
+        model: 'suit_categories',
         key: 'id',
       },
       onDelete: 'SET NULL',
@@ -77,14 +77,14 @@ ProductImage.init(
   },
   {
     sequelize,
-    tableName: 'product_images',
+    tableName: 'suit_category_images',
     timestamps: true,
     indexes: [
       {
-        fields: ['productId'],
+        fields: ['suitCategoryId'],
       },
     ],
   }
 );
 
-export default ProductImage;
+export default SuitCategoryImage;
