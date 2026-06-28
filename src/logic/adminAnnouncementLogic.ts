@@ -1,6 +1,5 @@
 import Announcement from '../models/announcement';
 import AnnouncementImage from '../models/announcementImage';
-import Product from '../models/product';
 
 export default {
     async getAllAnnouncements(): Promise<Announcement[]> {

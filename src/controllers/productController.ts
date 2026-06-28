@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import Product, { ProductAttributes } from '../models/product';
-import ProductImage from '../models/productImage';
+import { SuitCategory, Suit, SuitCategoryImage } from '../models';
 import sequelize from '../config/db';
-import { Category } from '../models';
 import path from 'path';
 
 // Global localStorage declaration for browser API in Node
@@ -17,100 +15,100 @@ declare global {
 }
 
 export default {
-  async getAllProducts(req: Request, res: Response, next: NextFunction) {
+  async getAllSuitCategories(req: Request, res: Response, next: NextFunction) {
     try {
       const { showToClients = true } = req.query;
 
-      const products = await Product.findAndCountAll({
+      const suitCategories = await SuitCategory.findAndCountAll({
         where: {
           deleted: false,
           ...(showToClients === 'false' && { showToClients: false }),
         },
         include: [
-          { model: Category, as: 'category' },
-          { model: ProductImage, as: 'images', order: [['order', 'DESC']] },
+          { model: SuitCategoryImage, as: 'images', order: [['order', 'DESC']] },
         ],
-        order: [['createdAt', 'DESC']],
+        order: [['signPrice', 'ASC']],
       });
 
       res.json({
         success: true,
-        data: products.rows,
-        count: products.count,
+        data: suitCategories.rows,
+        count: suitCategories.count,
       });
     } catch (error) {
       next(error);
     }
   },
 
-  async getProductById(req: Request, res: Response, next: NextFunction) {
+  async getSuitCategoryById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const product = await Product.findOne({
+      const suitCategory = await SuitCategory.findOne({
         where: { id, deleted: false },
         include: [
-          { model: Category, as: 'category' },
-          { model: ProductImage, as: 'images' },
+          { model: SuitCategoryImage, as: 'images' },
         ],
       });
 
-      if (!product) {
-        res.status(404).json({ success: false, message: 'Producto no encontrado' });
+      if (!suitCategory) {
+        res.status(404).json({ success: false, message: 'Categoría de habitación no encontrada' });
         return;
       }
 
-      res.json({ success: true, data: product });
+      res.json({ success: true, data: suitCategory });
     } catch (error) {
       next(error);
     }
   },
 
-  async getProductDetailPage(req: Request, res: Response, next: NextFunction) {
-
+  async getSuitCategoryDetailPage(req: Request, res: Response, next: NextFunction) {
     try {
-
-      const product = await Product.findOne({
+      const suitCategory = await SuitCategory.findOne({
         where: { id: req.params.id, deleted: false },
         include: [
-          { model: Category, as: 'category' },
-          { model: ProductImage, as: 'images' },
+          { model: SuitCategoryImage, as: 'images' },
         ],
       });
 
-      if (!product) {
+      if (!suitCategory) {
         return res.status(404).render('404');
       }
-     res.render('details', {
-        product,
-        category: product.categoryId,
-        title: product.name
+
+      res.render('suitCategoryDetails', {
+        suitCategory,
+        title: suitCategory.name
       });
-
     } catch (error) {
-
       next(error);
-
     }
   },
 
-async getTopBarUpdated(req: Request, res: Response, next: NextFunction) {
-  try {
-    // Renderizamos el partial "topbar" usando el motor de vistas de Express
-    // Pasamos las variables necesarias (ejemplo: carrito en localStorage)
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    res.render('partials/topbar', {
-      cart: cart
-    }, (err, html) => {
-      if (err) {
-        return next(err);
-      }
-      // Devolvemos el HTML ya renderizado
-      res.json({ html });
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+  async getSuitCategories(req: Request, res: Response, next: NextFunction) {
+    try {
+      const suitCategories = await SuitCategory.findAll({
+        where: { deleted: false },
+        include: [
+          { model: SuitCategoryImage, as: 'images', limit: 1 },
+        ],
+      });
 
+      res.render('suitCategoriesList', {
+        suitCategories,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getTopBarUpdated(req: Request, res: Response, next: NextFunction) {
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+      res.render('partials/topbar', {
+        cart: cart,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

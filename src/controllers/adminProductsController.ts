@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import ProductImage from '../models/productImage';
+import { SuitCategoryImage } from '../models';
 import multer from 'multer';
 import adminProductLogic from '../logic/adminProductLogic';
 import adminCategoryLogic from '../logic/adminCategoryLogic';
-import Category from '../models/category';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gossip-cases-secret-key-change-in-prod';
 
@@ -109,13 +108,12 @@ export default {
 
   async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, price, categoryId, description, showToClients, outStock, topProduct } = req.body;
+      const { name, signPrice, description, showToClients, outStock, topProduct } = req.body;
       const files = Array.isArray(req.files) ? req.files : (req.files as any).images || [];
 
       const productAndFiles = await adminProductLogic.createProductData(
         name,
-        price,
-        categoryId,
+        signPrice,
         description,
         showToClients,
         outStock,
@@ -131,8 +129,8 @@ export default {
 
         const compressedBuffer = await adminProductLogic.compressImage(file.buffer);
 
-        await ProductImage.create({
-          productId: product.id,
+        await SuitCategoryImage.create({
+          suitCategoryId: product.id,
           name: file.originalname,
           file: compressedBuffer.toString('base64'),
           order: i + 1,
@@ -148,15 +146,14 @@ export default {
   async editProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const { name, price, categoryId, description, showToClients, outStock, topProduct } = req.body;
+      const { name, signPrice, description, showToClients, outStock, topProduct } = req.body;
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       const allFiles = Object.values(files).flat();
 
       const updatedProduct = await adminProductLogic.editProductData(
         id,
         name,
-        price,
-        categoryId,
+        signPrice,
         description,
         showToClients,
         outStock,
@@ -175,10 +172,10 @@ export default {
         if (order >= 1 && order <= 4) {
           const compressedBuffer = await adminProductLogic.compressImage(file.buffer);
 
-          await ProductImage.destroy({ where: { productId: product.id, order } });
+          await SuitCategoryImage.destroy({ where: { suitCategoryId: product.id, order } });
 
-          await ProductImage.create({
-            productId: product.id,
+          await SuitCategoryImage.create({
+            suitCategoryId: product.id,
             name: String(order),
             file: compressedBuffer.toString('base64'),
             order,
@@ -247,7 +244,7 @@ export default {
 
   async createProductPage(req: Request, res: Response, next: NextFunction) {
     try {
-      const categories = await Category.findAll();
+      const categories = await adminCategoryLogic.getAllCategories();
       res.render('admin/createEditProduct', {
         title: 'Crear Producto',
         product: null,

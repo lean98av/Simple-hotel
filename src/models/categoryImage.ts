@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/db';
-import type Category from './category';
 
 export interface CategoryImageAttributes {
   id?: number;

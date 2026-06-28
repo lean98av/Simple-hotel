@@ -8,7 +8,7 @@ export default {
       const limit = 10;
       const statusFilter = req.query.status as string || 'all';
 
-      const data = await adminOrderLogic.getOrdersWithPagination(page, limit, statusFilter);
+      const data = await adminOrderLogic.getBookingsWithPagination(page, limit, statusFilter);
 
       res.render('admin/adminOrders', {
         title: 'Admin - Ordenes',
@@ -28,7 +28,7 @@ export default {
       const limit = 10;
       const statusFilter = req.query.status as string || 'all';
 
-      const data = await adminOrderLogic.loadMoreOrders(page, limit, statusFilter);
+      const data = await adminOrderLogic.loadMoreBookings(page, limit, statusFilter);
 
       res.json({
         orders: data.orders,
@@ -48,7 +48,7 @@ export default {
         return res.status(400).json({ success: false, message: 'Faltan parámetros requeridos: id y status' });
       }
 
-      const updated = await adminOrderLogic.updateOrderData(id, status);
+      const updated = await adminOrderLogic.updateBookingStatus(id, status);
 
       if (!updated) {
         return res.status(404).json({ success: false, message: 'Orden no encontrada' });

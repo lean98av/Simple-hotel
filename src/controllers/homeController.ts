@@ -1,20 +1,13 @@
 import { Request, Response } from 'express';
-import { Home } from '../models/home';
 import { Category } from '../models/category';
-import { CategoryImage, Product, ProductImage } from '../models';
 import { Announcement } from '../models/announcement';
 import AnnouncementImage from '../models/announcementImage';
 import { Op } from 'sequelize';
-import order from '../models/order';
+import { SuitCategory, SuitCategoryImage, Suit } from '../models';
 
 export class HomeController {
   static async home(req: Request, res: Response) {
-    const categories = await Category.findAll({
-      where: { deleted: false, showToClients: true },
-      include: [
-        { model: CategoryImage, as: 'images', limit: 1 },
-      ],
-    });
+   
 
     const announcements = await Announcement.findAll({
       where: {
@@ -27,29 +20,24 @@ export class HomeController {
       include: [{ model: AnnouncementImage, as: 'images', limit: 1 }],
     });
 
-    const allProducts = await Product.findAll({
+    const allSuitCategories = await SuitCategory.findAll({
+      where: { deleted: false, showToClients: true },
       include: [
-        { model: Category, as: 'category' },
-        { model: ProductImage, as: 'images' },
+        { model: SuitCategoryImage, as: 'images', limit: 1 },
       ],
-      where: {
-        deleted: false,
-        showToClients: true,
-      },
-      order: [['price', 'ASC']],
     });
 
     const categoryIdMap = new Set<number>();
-    allProducts.forEach((product) => {
-      categoryIdMap.add(product.categoryId);
+    allSuitCategories.forEach((category) => {
+      categoryIdMap.add(category.id);
     });
 
-    // Filtrar categorías que tienen al menos 1 producto
-    const categoriesWithProducts = categories.filter((category) =>
+    // Filtrar categorías que tienen al menos 1 suite
+    const categoriesWithSuites = allSuitCategories.filter((category) =>
       categoryIdMap.has(category.id)
     );
 
-    res.render('home', { categories: categoriesWithProducts, announcements, topProducts: allProducts.filter(p => p.topProduct == true) });
+    res.render('home', { categories: categoriesWithSuites, announcements, topProducts: [] });
   }
 }
   

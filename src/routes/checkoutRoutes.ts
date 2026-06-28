@@ -7,8 +7,8 @@ const cartController = new CartController();
 
 router.get('/', cartController.checkoutPage);
 
-router.post('/', cartController.createOrder);
+router.post('/', cartController.createBooking);
 
-router.get('/success', cartController.checkoutSuccess.bind(cartController));
+router.get('/success', cartController.checkoutSuccess);
 
 export default router;

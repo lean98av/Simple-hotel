@@ -2,25 +2,7 @@
   "development": {
     "username": "root",
     "password": "1234",
-    "database": "simple_hotel",
-    "host": "localhost",
-    "dialect": "mysql",
-    "port": 3306,
-    "logging": false
-  },
-  "test": {
-    "username": "root",
-    "password": "1234",
-    "database": "simple_hotel_test",
-    "host": "localhost",
-    "dialect": "mysql",
-    "port": 3306,
-    "logging": false
-  },
-  "production": {
-    "username": "root",
-    "password": "1234",
-    "database": "simple_hotel_prod",
+    "database": "hotel",
     "host": "localhost",
     "dialect": "mysql",
     "port": 3306,

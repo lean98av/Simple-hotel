@@ -1,53 +1,40 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/db';
-import Category from './category';
-import ProductImage from './productImage';
+import Suit from './suit';
+import SuitCategoryImage from './suitCategoryImage';
 
-export interface ProductAttributes {
+export interface SuitCategoryAttributes {
   id: number;
+  categoryId:number;
   name: string;
-  price: number;
   description?: string;
-  categoryId: number;
+  signPrice: number;
   showToClients: boolean;
-  outStock: boolean;
   deleted: boolean;
-  topProduct: boolean;
-  order?: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface ProductCreationAttrs extends Optional<ProductAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+export interface SuitCategoryCreationAttrs {
   name: string;
-  price: number;
   description?: string;
-  categoryId: number;
+  signPrice: number;
   showToClients: boolean;
-  outStock: boolean;
-  topProduct: boolean;
-  order?: number;
-  id?: undefined;
-  createdAt?: undefined;
-  updatedAt?: undefined;
+  deleted: boolean;
 }
 
-class Product extends Model<ProductAttributes, ProductCreationAttrs> {
+class SuitCategory extends Model<SuitCategoryAttributes, SuitCategoryCreationAttrs> {
   public id!: number;
   public name!: string;
-  public price!: number;
   public description?: string;
-  public categoryId!: number;
+  public signPrice!: number;
   public showToClients!: boolean;
-  public outStock!: boolean;
   public deleted!: boolean;
-  public topProduct!: boolean;
-  public order?: number;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
 
-Product.init(
+SuitCategory.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -60,22 +47,22 @@ Product.init(
       allowNull: false,
       unique: false,
     },
-    price: {
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    signPrice: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {
         min: 0,
       },
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
     categoryId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Category,
+        model: 'categories',
         key: 'id',
       },
     },
@@ -84,17 +71,7 @@ Product.init(
       allowNull: false,
       defaultValue: true,
     },
-    outStock: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
     deleted: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    topProduct: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
@@ -112,38 +89,30 @@ Product.init(
   },
   {
     sequelize,
-    tableName: 'products',
+    tableName: 'suit_categories',
     timestamps: true,
     indexes: [
-      {
-        fields: ['showToClients'],
-      },
-      {
-        fields: ['categoryId'],
-      },
       {
         fields: ['deleted'],
       },
       {
-        fields: ['topProduct'],
+        fields: ['signPrice'],
+      },
+      {
+        fields: ['categoryId'],
       },
     ],
   }
 );
 
-Product.belongsTo(Category, {
-  foreignKey: 'categoryId',
-  as: 'category',
-});
-
-Product.hasMany(ProductImage, {
-  foreignKey: 'productId',
+SuitCategory.hasMany(SuitCategoryImage, {
+  foreignKey: 'suitCategoryId',
   as: 'images',
 });
 
-ProductImage.belongsTo(Product, {
-  foreignKey: 'productId',
-  as: 'product',
+SuitCategory.belongsTo(Suit, {
+  foreignKey: 'suitId',
+  as: 'suits',
 });
 
-export default Product;
+export default SuitCategory;

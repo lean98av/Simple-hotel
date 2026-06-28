@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Setting from "../models/setting";
-import adminLogic from "../logic/adminLogic";
 
 export async function settingsHome(req: Request, res: Response) {
   try {
