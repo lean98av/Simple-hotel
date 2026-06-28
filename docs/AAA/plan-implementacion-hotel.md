@@ -3,7 +3,198 @@
 ## 1. Objetivo
 Implementar el módulo hotel sobre la arquitectura actual del proyecto (Express + EJS + Sequelize + PostgreSQL) de forma incremental, sin romper el flujo existente de e-commerce.
 
-## 2. Estrategia recomendada
+## 2. Explicación simple del cambio
+Piensen en esto como cambiar una tienda de ropa por un hotel, pero sin tirar todo lo que ya existe.
+
+- Hoy el sistema vende productos. En el hotel no se venderán productos, sino habitaciones y reservas.
+- Un producto viejo se convierte en un tipo de habitación. Por ejemplo: "Habitación Deluxe".
+- Una foto de producto se convierte en una foto de ese tipo de habitación.
+- Ahora necesitamos una habitación real, con número, estado y si está ocupada o no.
+- Un pedido viejo se convierte en una reserva: alguien entra, se queda unos días y luego sale.
+- El administrador debe poder ver todo esto en una pantalla nueva.
+
+### 2.1 Qué cambia de forma muy simple
+- Antes: había productos para vender.
+- Ahora: hay tipos de habitaciones, habitaciones reales y reservas.
+- Antes: un pedido tenía productos y dirección.
+- Ahora: una reserva tiene habitación, fecha de entrada y fecha de salida.
+- Antes: el stock indicaba si había producto.
+- Ahora: el estado de la habitación indica si está libre, ocupada, limpia, etc.
+
+### 2.2 Qué no hay que romper
+- No hay que borrar lo que ya funciona.
+- No hay que cambiar todo de golpe.
+- Lo mejor es agregar nuevas tablas, nuevos modelos y nuevas pantallas, y dejar el resto funcionando.
+
+## 3. Cambios concretos que hay que hacer
+
+### 3.1 Cambiar la idea de "producto" por "tipo de habitación"
+Esto es el cambio más importante.
+
+Hoy el sistema tiene algo parecido a esto:
+- un producto tiene nombre
+- tiene precio
+- tiene foto
+- puede estar visible o no
+- puede estar fuera de stock
+
+En el hotel, eso debe convertirse en algo más parecido a esto:
+- un tipo de habitación tiene nombre
+- tiene descripción
+- tiene precio de reserva
+- tiene foto ilustrativa
+- puede estar activo o inactivo
+
+En palabras muy simples: un producto es una cosa para vender; un tipo de habitación es una categoría de lo que ofrece el hotel.
+
+Cambios concretos:
+- Quitar columnas viejas como `outStock` y `topProduct`.
+- Agregar una columna nueva llamada `signPrice`.
+- Esta columna representa cuánto cuesta reservar esa categoría de habitación.
+- Si vale `0`, significa que esa categoría no tiene costo de reserva.
+
+### 3.2 Cambiar las fotos de productos por fotos de tipos de habitación
+Hoy las imágenes están asociadas a productos.
+
+Ahora deben estar asociadas a tipos de habitación.
+
+Esto significa:
+- renombrar la idea de producto a tipo de habitación
+- cambiar la relación para que una imagen pertenezca a una categoría de habitación
+- mantener la lógica de subir fotos, mostrar fotos y borrarlas
+
+### 3.3 Crear la habitación real
+Aquí aparece algo nuevo: no basta con tener un tipo de habitación; también hace falta la habitación física.
+
+Ejemplo:
+- "Habitación Deluxe" es el tipo.
+- La habitación 101 es una habitación concreta del hotel.
+
+Por eso se necesita una entidad nueva llamada `Suit`.
+
+Campos que debe tener:
+- número de habitación
+- estado actual
+- si está activa o eliminada
+- a qué tipo de habitación pertenece
+
+Estados posibles:
+- disponible
+- no disponible
+- en mantenimiento
+- en limpieza
+- ocupada
+
+Esto se parece a decir: "la habitación 101 existe de verdad".
+
+### 3.4 Cambiar los pedidos por reservas
+El sistema actual tiene órdenes.
+
+Una orden vieja se usa para vender productos, pero en el hotel lo que se necesita es una reserva.
+
+Por eso se debe transformar la entidad `Order` en `Booking`.
+
+La reserva debe guardar:
+- qué habitación se reservó
+- desde qué fecha
+- hasta qué fecha
+- cuánto cuesta la reserva
+- si hubo recargo
+- cuánto pagó el cliente en total
+- el estado de la reserva
+
+En otras palabras: antes se vendía un producto y se entregaba; ahora se reserva una habitación y se ocupa por un tiempo.
+
+### 3.5 Crear nuevas pantallas de administración
+El backoffice actual está pensado para vender cosas.
+
+Ahora hay que agregar nuevas secciones para manejar el hotel:
+- Suites: para ver y cambiar las habitaciones
+- Bookings: para ver y gestionar reservas
+
+El administrador debe poder entrar a estas pantallas desde el home del panel.
+
+## 4. Qué se debe tocar en el proyecto
+
+### 4.1 Base de datos
+Hay que crear nuevas tablas:
+- `suit_categories`
+- `suit_category_images`
+- `suits`
+- `bookings`
+
+También hay que modificar o reemplazar las tablas viejas que representaban productos y pedidos.
+
+### 4.2 Modelos
+Hay que crear nuevos modelos en [src/models](src/models) para cada entidad nueva.
+
+Cada modelo debe tener:
+- campos
+- tipos de datos
+- validaciones básicas
+- relaciones con otros modelos
+
+### 4.3 Controladores y rutas
+Hay que crear o adaptar controladores para:
+- crear categorías
+- editar categorías
+- listar categorías
+- subir imágenes
+- crear suites
+- editar suites
+- crear reservas
+- cambiar estados de reserva
+
+### 4.4 Vistas del admin
+Hay que crear pantallas nuevas en [src/views/admin](src/views/admin) para:
+- ver categorías
+- crear o editar categorías
+- ver suites
+- ver reservas
+- crear reservas
+
+### 4.5 Estilos
+Hay que agregar o adaptar CSS en [public/css/admin](public/css/admin) para que las nuevas pantallas se vean bien.
+
+## 5. Reglas de negocio que no se pueden olvidar
+Estas reglas son importantes porque hacen que el sistema sea útil de verdad.
+
+- Una reserva no puede usar una habitación que ya está ocupada en esas fechas.
+- Una suite debe tener un número único.
+- Una suite debe mostrar un estado claro.
+- Una reserva debe tener un estado como pendiente, confirmada, en curso o finalizada.
+- El administrador debe poder cambiar estados desde una lista o un detalle.
+
+## 6. Orden recomendado para hacerlo
+1. Crear las tablas nuevas en base de datos.
+2. Crear los modelos y relaciones.
+3. Crear los endpoints del backend.
+4. Hacer las pantallas del admin.
+5. Conectar el menú del panel.
+6. Probar con datos reales.
+
+## 7. Versión ultra simple del plan
+Si lo vemos como si fuera para un niño, sería así:
+
+- Primero hacemos una caja para guardar tipos de habitaciones.
+- Luego hacemos otra caja para guardar las habitaciones reales del hotel.
+- Luego hacemos otra caja para guardar las reservas.
+- Después enseñamos al administrador a usar esas cajas desde una pantalla.
+- Finalmente comprobamos que todo funcione.
+
+## 8. MVP mínimo para empezar
+Si se quiere avanzar rápido, lo mínimo útil sería:
+- crear tipos de habitación
+- crear habitaciones reales
+- crear reservas básicas con fechas
+- ver todo desde el panel de administración
+
+Con eso ya se puede probar el flujo completo del hotel.
+
+---
+
+## 9. Resumen final en una frase
+El sistema pasa de vender cosas a administrar un hotel, y para eso hay que separar tres ideas claras: tipo de habitación, habitación real y reserva.
 1. Crear nuevas entidades y tablas para hotel sin eliminar aún las actuales.
 2. Implementar primero la base de datos y los modelos.
 3. Exponer endpoints de administración para categorías, imágenes, suites y bookings.
